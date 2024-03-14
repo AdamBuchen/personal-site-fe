@@ -68,8 +68,6 @@ export const Terminal = forwardRef(
               tabbedItemIdx = 0;
               if (possibleCommands.length > 0) {
                 setInputValue(possibleCommands[tabbedItemIdx]);
-              } else {
-                setInputValue('');
               }
             }
           }
