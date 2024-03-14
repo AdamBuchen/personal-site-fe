@@ -8,12 +8,13 @@ export const Terminal = forwardRef(
     const {
       history = [],
       promptLabel = '>',
-
       commands = {},
     } = props;
 
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
+    const commandsList: string[] = Object.keys(commands);
+    var tabbedItemIdx = 0;
 
     /**
      * Focus on the input whenever we render the terminal or click in the terminal
@@ -42,7 +43,37 @@ export const Terminal = forwardRef(
      */
     const handleInputKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          var possibleCommands:string[] = [];
+          const partialCommand = input.toLowerCase().trim();
+          if (partialCommand.length > 0) {
+            for (let i = 0; i < commandsList.length; i++) {    
+              const thisCommand = commandsList[i];
+              var commandMatches = true;
+              for (let k = 0; k < thisCommand.length; k++) {
+                if (thisCommand[k] != partialCommand[k] && partialCommand[k] !== undefined) {
+                  commandMatches = false;
+                  break;
+                }
+              }
+              if (commandMatches) {
+                possibleCommands.push(thisCommand);
+              }
+            }
+            if (possibleCommands[tabbedItemIdx] !== undefined) {
+              setInputValue(possibleCommands[tabbedItemIdx]);
+              tabbedItemIdx++;
+            } else {
+              tabbedItemIdx = 0;
+              if (possibleCommands.length > 0) {
+                setInputValue(possibleCommands[tabbedItemIdx]);
+              } else {
+                setInputValue('');
+              }
+            }
+          }
+        } else if (e.key === 'Enter') {
           const commandToExecute = commands?.[input.toLowerCase()];
           if (commandToExecute) {
             commandToExecute?.();
