@@ -13,8 +13,10 @@ export const Terminal = forwardRef(
 
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
-    const commandsList: string[] = Object.keys(commands);
+    //const commandsList: string[] = Object.keys(commands);
+    const commandsList: string[] = ["alert", "help", "download_resume"];
     var tabbedItemIdx = 0;
+    var userEnteredCommand = "";
 
     /**
      * Focus on the input whenever we render the terminal or click in the terminal
@@ -47,6 +49,7 @@ export const Terminal = forwardRef(
           e.preventDefault();
           var possibleCommands:string[] = [];
           const partialCommand = input.toLowerCase().trim();
+          userEnteredCommand = partialCommand;
           if (partialCommand.length > 0) {
             for (let i = 0; i < commandsList.length; i++) {    
               const thisCommand = commandsList[i];

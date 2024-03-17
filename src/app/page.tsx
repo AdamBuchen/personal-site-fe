@@ -29,29 +29,35 @@ export default function Home() {
 
     pushToHistory(<>
         <pre>ASCII art goes here.</pre>
-        <div>You can write: start or alert, to execute some commands.</div>
+        <div>Valid commands: help, download_resume</div>
       </>
     );
   }, []);
 
   const commands = useMemo(() => ({
-    'start': async () => {
-      await pushToHistory(<>
-          <div>
-            <strong>Starting</strong> the server... <span>Done</span>
-          </div>
-        </>);
+    'help': async () => {
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+            <strong>Welcome to AdamBuchen.com - Feel free to use any of the above commands.</strong>
+          </span>
+        </div>
+      </>);
     },
-    'alert': async () => {
-      alert('Hello!');
-      await pushToHistory(<>
-          <div>
-            <strong>Alert</strong>
-            <span style={{color: '#F9EF00', marginLeft: 10}}>
-              <strong>Shown in the browser</strong>
-            </span>
-          </div>
-        </>);
+    'download_resume': async () => {
+      const link = document.createElement('a');
+      link.href = '/Adam_Buchen_Resume.pdf';
+      link.download = 'Adam_Buchen_Resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+            <strong>Downloaded resume</strong>
+          </span>
+        </div>
+      </>);
     },
   }), [pushToHistory]);
 
