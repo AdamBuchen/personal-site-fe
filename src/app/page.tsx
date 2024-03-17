@@ -28,8 +28,8 @@ export default function Home() {
     resetTerminal();
 
     pushToHistory(<>
-        <pre>ASCII art goes here.</pre>
-        <div>Valid commands: help, download_resume</div>
+        <pre>{asciiArt}</pre>
+        <div>Valid commands: help, clear, ls, download_resume</div>
       </>
     );
   }, []);
@@ -43,6 +43,21 @@ export default function Home() {
           </span>
         </div>
       </>);
+    },
+    'clear': async () => {
+      resetTerminal();
+    },
+    'ls': async() => {
+      pushToHistory(<>
+        <div>
+          <ul style={{ color: '#33FF33', marginLeft: 10, listStyleType: 'none'}}>
+            <li>clear</li>
+            <li>download_resume</li>
+            <li>help</li>
+            <li>ls</li>
+          </ul>
+        </div>
+    </>);
     },
     'download_resume': async () => {
       const link = document.createElement('a');
