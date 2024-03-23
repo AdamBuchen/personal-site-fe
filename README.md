@@ -1,3 +1,7 @@
+# AdamBuchen.com
+
+This is the front-end code for Adam Buchen's personal website.
+
 ## Custom Terminal App
 
 Terminal app forked from https://github.com/alexandrutasica/react-terminal-emulator-site
