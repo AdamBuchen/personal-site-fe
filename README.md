@@ -1,6 +1,6 @@
 # AdamBuchen.com
 
-This is the front-end code for Adam Buchen's personal website.
+This is the front-end code for Adam Buchen's personal website. It was built with TypeScript and React.
 
 ## Custom Terminal App
 
@@ -16,3 +16,5 @@ Terminal app forked from https://github.com/alexandrutasica/react-terminal-emula
 ## Contact
 
 Authored by adam.buchen [at] gmail.com
+
+[LinkedIn](https://www.linkedin.com/in/adambuchen/)
