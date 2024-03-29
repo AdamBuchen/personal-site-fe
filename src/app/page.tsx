@@ -38,7 +38,7 @@ export default function Home() {
     'help': async () => {
       pushToHistory(<>
         <div>
-          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+          <span style={{ color: '#F9EF00' }}>
             <strong>Welcome to AdamBuchen.com - Feel free to use any of the above commands.</strong>
           </span>
         </div>
@@ -47,7 +47,7 @@ export default function Home() {
     'about': async() => {
       pushToHistory(<>
         <div>
-          <span style={{ color: '#F9EF00'}}>
+          <span style={{ color: '#F9EF00' }}>
             <strong>This is the personal site for Adam Buchen.</strong><br />
               The front-end was written in React with TypeScript.<br />
           </span>
@@ -60,7 +60,7 @@ export default function Home() {
     'ls': async() => {
       pushToHistory(<>
         <div>
-          <ul style={{ color: '#33FF33', marginLeft: 10, listStyleType: 'none'}}>
+          <ul style={{ color: '#33FF33', listStyleType: 'none' }}>
             <li>about</li>
             <li>clear</li>
             <li>download_resume</li>
@@ -81,7 +81,7 @@ export default function Home() {
       document.body.removeChild(link);
       pushToHistory(<>
         <div>
-          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+          <span style={{ color: '#F9EF00' }}>
             <strong>Downloaded resume</strong>
           </span>
         </div>
@@ -96,7 +96,7 @@ export default function Home() {
       document.body.removeChild(link);
       pushToHistory(<>
         <div>
-          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+          <span style={{ color: '#F9EF00' }}>
             <strong>Opened GitHub in a new tab.</strong>
           </span>
         </div>
@@ -111,7 +111,7 @@ export default function Home() {
       document.body.removeChild(link);
       pushToHistory(<>
         <div>
-          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+          <span style={{ color: '#F9EF00' }}>
             <strong>Opened LinkedIn in a new tab.</strong>
           </span>
         </div>
