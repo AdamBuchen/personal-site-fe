@@ -8,7 +8,10 @@ Terminal app forked from https://github.com/alexandrutasica/react-terminal-emula
 
 ## Possible Commands
 
+* about - provides info about the app
 * help - shows help text
+* github - open new tab to Adam's GitHub
+* linkedin - open new tab to Adam's LinkedIn
 * ls - view list of commands / files
 * clear - clear the terminal
 * download_resume - download a copy of the latest resume as PDF to the browser

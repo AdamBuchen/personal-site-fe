@@ -28,8 +28,8 @@ export default function Home() {
     resetTerminal();
 
     pushToHistory(<>
-        <pre>{asciiArt}</pre>
-        <div>Valid commands: help, clear, ls, download_resume</div>
+        {/* <pre>{asciiArt}</pre> */}
+        <div>Valid commands: help, clear, ls, download_resume, linkedin, github, about</div>
       </>
     );
   }, []);
@@ -44,6 +44,16 @@ export default function Home() {
         </div>
       </>);
     },
+    'about': async() => {
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00'}}>
+            <strong>This is the personal site for Adam Buchen.</strong><br />
+              The front-end was written in React with TypeScript.<br />
+          </span>
+        </div>
+      </>);
+    },
     'clear': async () => {
       resetTerminal();
     },
@@ -51,9 +61,12 @@ export default function Home() {
       pushToHistory(<>
         <div>
           <ul style={{ color: '#33FF33', marginLeft: 10, listStyleType: 'none'}}>
+            <li>about</li>
             <li>clear</li>
             <li>download_resume</li>
             <li>help</li>
+            <li>github</li>
+            <li>linkedin</li>
             <li>ls</li>
           </ul>
         </div>
@@ -70,6 +83,36 @@ export default function Home() {
         <div>
           <span style={{ color: '#F9EF00', marginLeft: 10 }}>
             <strong>Downloaded resume</strong>
+          </span>
+        </div>
+      </>);
+    },
+    'github': async() => {
+      const link = document.createElement('a');
+      link.href = 'https://github.com/AdamBuchen';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+            <strong>Opened GitHub in a new tab.</strong>
+          </span>
+        </div>
+      </>);
+    },
+    'linkedin': async() => {
+      const link = document.createElement('a');
+      link.href = 'https://www.linkedin.com/in/adambuchen/';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00', marginLeft: 10 }}>
+            <strong>Opened LinkedIn in a new tab.</strong>
           </span>
         </div>
       </>);
