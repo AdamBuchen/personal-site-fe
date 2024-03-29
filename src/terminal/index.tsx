@@ -14,7 +14,7 @@ export const Terminal = forwardRef(
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
     //const commandsList: string[] = Object.keys(commands);
-    const commandsList: string[] = ["about", "clear", "download_resume", "github", "help", "linkedin", "ls"];
+    const commandsList: string[] = ["about", "clear", "download_resume", "github", "help", "linkedin", "ls", "view_resume"];
     var tabbedItemIdx = 0;
     var userEnteredCommand = "";
 

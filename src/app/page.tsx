@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import { Terminal } from "../terminal";
 import {useTerminal} from "../terminal/hooks";
 import {useEffect, useMemo} from "react";
+import { jsonResume } from "@/terminal/types";
 
 export default function Home() {
   const {
@@ -35,7 +36,7 @@ export default function Home() {
     pushToHistory(<>
         <pre>{asciiArt}</pre>
         <div className="terminal__date">{isoStringWithoutMillis}<br /></div>
-        <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr</div>
+        <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr, view_resume</div>
       </>
     );
   }, []);
@@ -195,6 +196,18 @@ export default function Home() {
         }
         resetTerminal();
       });
+    },
+    'view_resume': () => {
+      pushToHistory(<>
+        <br />
+        <span style={{ color: '#F9EF00' }}>
+            <strong>Adam Buchen's Resume</strong>
+        </span>
+        <br />
+        <pre>{jsonResume}</pre>
+        <br />
+      </>
+    );
     },
   }), [pushToHistory]);
 
