@@ -18,6 +18,11 @@
     white-space: pre-wrap;
 }
 
+.terminal__date {
+    line-height: 2;
+    white-space: pre-wrap;
+}
+
 .terminal__prompt {
     display: flex;
     align-items: center;

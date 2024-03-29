@@ -23,14 +23,18 @@ export default function Home() {
 \____|__  /\____ |(____  /__|_|  /______  /____/  \___  >___|  /\___  >___|  / /\ \___  >____/|__|_|  /
         \/      \/     \/      \/       \/            \/     \/     \/     \/  \/     \/            \/ 
 
-        
+
 `;
 
   useEffect(() => {
     resetTerminal();
 
+    const currentDate = new Date();
+    const isoStringWithoutMillis = currentDate.toISOString().slice(0, -5) + 'Z';
+
     pushToHistory(<>
         <pre>{asciiArt}</pre>
+        <div className="terminal__date">{isoStringWithoutMillis}<br /></div>
         <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr</div>
       </>
     );
