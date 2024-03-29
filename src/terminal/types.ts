@@ -188,8 +188,7 @@ export const jsonResume :string = `
   "patents": [
     {
       "patent_number": "US 20150142486",
-      "patent_title": "Systems and methods for cloud-based digital asset 
-                      management"
+      "patent_title": "Systems and methods for cloud-based digital asset management"
     },
     {
       "patent_number": "US 20140100967 A1",
