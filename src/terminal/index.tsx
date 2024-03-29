@@ -86,18 +86,19 @@ export const Terminal = forwardRef(
     );
 
     return (
-    <div className="terminal" ref={ref} onClick={focusInput}>
+    <div id='terminal_root' className="terminal" ref={ref} onClick={focusInput}>
       {history.map((line, index) => (
         <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
           {line}
         </div>
       ))}
-      <div className="terminal__prompt">
-        <div className="terminal__prompt__label">{promptLabel}</div>
-        <div className="terminal__prompt__input">
+      <div id='prompt_root' className="terminal__prompt">
+        <div id='prompt_label' className="terminal__prompt__label">{promptLabel}</div>
+        <div id='prompt_input_div' className="terminal__prompt__input">
           <input
-            type="text"
-            spellCheck="false"
+            id='prompt_input'
+            type='text'
+            spellCheck='false'
             value={input}
             onKeyDown={handleInputKeyDown}
             onChange={handleInputChange}

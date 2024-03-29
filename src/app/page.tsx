@@ -29,7 +29,7 @@ export default function Home() {
 
     pushToHistory(<>
         {/* <pre>{asciiArt}</pre> */}
-        <div>Valid commands: help, clear, ls, download_resume, linkedin, github, about</div>
+        <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr</div>
       </>
     );
   }, []);
@@ -68,6 +68,7 @@ export default function Home() {
             <li>github</li>
             <li>linkedin</li>
             <li>ls</li>
+            <li>rr</li>
           </ul>
         </div>
     </>);
@@ -116,6 +117,78 @@ export default function Home() {
           </span>
         </div>
       </>);
+    },
+    'rr': () => {
+      function waitAndWatchRick(seconds: number, callback: () => void): void {
+        setTimeout(callback, seconds * 1000);
+      }
+      resetTerminal();
+      const term = document.getElementById('terminal_root');
+      const prompt = document.getElementById('prompt_root');
+      const prompt_label = document.getElementById('prompt_label');
+      const prompt_input_div = document.getElementById('prompt_input_div');
+      const prompt_input = document.getElementById('prompt_input');
+
+      var originalBackgroundColor = '#282828';
+      if (term !== null) {
+        originalBackgroundColor = term.style.backgroundColor;
+        term.style.backgroundColor = '#000000'
+        term.style.visibility = 'none';
+      }
+      if (prompt !== null) {
+        prompt.style.opacity = '0';
+      }
+      
+      if (prompt_label !== null) {
+        prompt_label.style.opacity = '0';
+      }
+
+      if (prompt_input_div !== null) {
+        prompt_input_div.style.opacity = '0';
+      }
+
+      if (prompt_input !== null) {
+        prompt_input.style.opacity = '0';
+      }
+
+      pushToHistory(<>
+        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', overflow: 'none'}}>
+            <div>
+              <iframe width="950" height="600" src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=NOLXZQhN8gdFMde4&amp;controls=0&amp;autoplay=1" 
+              title="YouTube video player" frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+            </div>
+        </div>
+        <div>
+          <span style={{ color: '#F9EF00' }}>
+            <center>
+              <strong>We know the game and we're gonna play it</strong>
+            </center>
+          </span>
+        </div>
+      </>);
+      waitAndWatchRick(213, () => { // The video is 3:32
+        if (term !== null) {
+          term.style.backgroundColor = originalBackgroundColor;
+          term.style.opacity = '1';
+        }
+        if (prompt !== null) {
+          prompt.style.opacity = '1';
+        }
+        if (prompt_label !== null) {
+          prompt_label.style.opacity = '1';
+        }
+  
+        if (prompt_input_div !== null) {
+          prompt_input_div.style.opacity = '1';
+        }
+  
+        if (prompt_input !== null) {
+          prompt_input.style.opacity = '1';
+        }
+        resetTerminal();
+      });
     },
   }), [pushToHistory]);
 
