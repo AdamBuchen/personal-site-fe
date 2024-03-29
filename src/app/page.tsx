@@ -76,6 +76,7 @@ export default function Home() {
             <li>linkedin</li>
             <li>ls</li>
             <li>rr</li>
+            <li>view_resume</li>
           </ul>
         </div>
     </>);
