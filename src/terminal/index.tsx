@@ -97,6 +97,7 @@ export const Terminal = forwardRef(
         <div className="terminal__prompt__input">
           <input
             type="text"
+            spellCheck="false"
             value={input}
             onKeyDown={handleInputKeyDown}
             onChange={handleInputChange}
