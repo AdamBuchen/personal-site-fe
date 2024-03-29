@@ -15,20 +15,22 @@ export default function Home() {
   } = useTerminal();
 
   
-  const asciiArt: string = `
-  _____       .___             __________              .__                                            
+  const asciiArt: string = String.raw`
+   _____       .___             __________              .__                                            
   /  _  \    __| _/____    _____\______   \__ __   ____ |  |__   ____   ____       ____  ____   _____  
  /  /_\  \  / __ |\__  \  /     \|    |  _/  |  \_/ ___\|  |  \_/ __ \ /    \    _/ ___\/  _ \ /     \ 
 /    |    \/ /_/ | / __ \|  Y Y  \    |   \  |  /\  \___|   Y  \  ___/|   |  \   \  \__(  <_> )  Y Y  \
 \____|__  /\____ |(____  /__|_|  /______  /____/  \___  >___|  /\___  >___|  / /\ \___  >____/|__|_|  /
         \/      \/     \/      \/       \/            \/     \/     \/     \/  \/     \/            \/ 
-  `;
+
+        
+`;
 
   useEffect(() => {
     resetTerminal();
 
     pushToHistory(<>
-        {/* <pre>{asciiArt}</pre> */}
+        <pre>{asciiArt}</pre>
         <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr</div>
       </>
     );
