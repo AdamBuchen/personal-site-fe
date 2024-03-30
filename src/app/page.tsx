@@ -45,7 +45,7 @@ export default function Home() {
     'error': async() => {
       pushToHistory(<>
         <div>
-          <span style={{ color: '##FF0000' }}>
+          <span style={{ color: '#FF0000' }}>
             <strong>Command not found</strong>
           </span>
         </div>
