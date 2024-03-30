@@ -75,9 +75,13 @@ export const Terminal = forwardRef(
             }
           }
         } else if (e.key === 'Enter') {
-          const commandToExecute = commands?.[input.toLowerCase()];
+          const inputLC = input.toLowerCase();
+          const commandToExecute = commands?.[inputLC];
           if (commandToExecute) {
             commandToExecute?.();
+          } else if (inputLC !== '') {
+            const errCmd = commands?.['error'];
+            errCmd?.();
           }
           setInputValue('');
         }

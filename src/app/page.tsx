@@ -42,11 +42,21 @@ export default function Home() {
   }, []);
 
   const commands = useMemo(() => ({
+    'error': async() => {
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '##FF0000' }}>
+            <strong>Command not found</strong>
+          </span>
+        </div>
+      </>);
+    },
     'help': async () => {
       pushToHistory(<>
         <div>
           <span style={{ color: '#F9EF00' }}>
-            <strong>Welcome to AdamBuchen.com - Feel free to use any of the above commands.</strong>
+            <strong>Welcome to AdamBuchen.com</strong><br />
+            <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr, view_resume</div>
           </span>
         </div>
       </>);
