@@ -4,8 +4,9 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Terminal } from "../terminal";
 import {useTerminal} from "../terminal/hooks";
-import {useEffect, useMemo} from "react";
-import { jsonResume } from "@/terminal/types";
+import {useEffect, useMemo, useState} from "react";
+import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
+import {AudioPlayer} from "../audioplayer/AudioPlayer";
 
 export default function Home() {
   const {
@@ -15,7 +16,13 @@ export default function Home() {
     resetTerminal,
   } = useTerminal();
 
-  
+  let src: string = "";
+
+  const [userHasStartedAudio, setUserHasStartedAudio] = useState(false);
+  const [currentStationIdx, setCurrentStationIdx] = useState(0); 
+  const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
   const asciiArt: string = String.raw`
    _____       .___             __________              .__                                            
   /  _  \    __| _/____    _____\______   \__ __   ____ |  |__   ____   ____       ____  ____   _____  
@@ -27,6 +34,49 @@ export default function Home() {
 
 `;
 
+  function nextRadioStation() {
+
+    let maxStationIdx = radioStations.length - 1;
+    let newStationIdx = currentStationIdx + 1;
+    if (newStationIdx > maxStationIdx) {
+      newStationIdx = 0;
+    }
+
+    setCurrentStationIdx(newStationIdx);
+    setCurrentTrackIdx(0);
+    setIsPlaying(true);
+  }
+
+  function nextTrack() {
+    let maxTrackIdx = musicTracks[currentStationIdx].length - 1;
+    let newTrackIdx = currentTrackIdx + 1;
+    if (newTrackIdx > maxTrackIdx) {
+      newTrackIdx = 0;
+    }
+  
+    setCurrentTrackIdx(newTrackIdx);
+    setIsPlaying(true);
+  }
+
+  useEffect(() => {
+
+    const radioStationName = radioStations[currentStationIdx];
+    const trackInfo = musicTracks[currentStationIdx][currentTrackIdx];
+
+    if (isPlaying) {
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00' }}>
+            <strong>Radio Station: {radioStationName}</strong><br/>
+            Track: {trackInfo.title}<br />
+            Artist: {trackInfo.artist}
+          </span>
+        </div>
+      </>);
+    }
+
+  }, [currentStationIdx, currentTrackIdx, isPlaying, setIsPlaying]);
+
   useEffect(() => {
     resetTerminal();
 
@@ -36,7 +86,7 @@ export default function Home() {
     pushToHistory(<>
         <pre>{asciiArt}</pre>
         <div className="terminal__date">{isoStringWithoutMillis}<br /></div>
-        <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr, view_resume</div>
+        <div>Valid commands: { topLevelValidCommands.join(', ') }</div>
       </>
     );
   }, []);
@@ -51,12 +101,15 @@ export default function Home() {
         </div>
       </>);
     },
+    'reset': () => {
+      window.location.reload();
+    },
     'help': async () => {
       pushToHistory(<>
         <div>
           <span style={{ color: '#F9EF00' }}>
             <strong>Welcome to AdamBuchen.com</strong><br />
-            <div>Valid commands: about, help, clear, ls, download_resume, linkedin, github, rr, view_resume</div>
+            <div>Valid commands: { topLevelValidCommands.join(', ') }</div>
           </span>
         </div>
       </>);
@@ -78,15 +131,9 @@ export default function Home() {
       pushToHistory(<>
         <div>
           <ul style={{ color: '#33FF33', listStyleType: 'none' }}>
-            <li>about</li>
-            <li>clear</li>
-            <li>download_resume</li>
-            <li>help</li>
-            <li>github</li>
-            <li>linkedin</li>
-            <li>ls</li>
-            <li>rr</li>
-            <li>view_resume</li>
+          { topLevelValidCommands.map((command: string) => {
+              return (<li>{command}</li>);
+          }) }
           </ul>
         </div>
     </>);
@@ -137,6 +184,7 @@ export default function Home() {
       </>);
     },
     'rr': () => {
+      setIsPlaying(false);
       function waitAndWatchRick(seconds: number, callback: () => void): void {
         setTimeout(callback, seconds * 1000);
       }
@@ -220,7 +268,52 @@ export default function Home() {
       </>
     );
     },
-  }), [pushToHistory]);
+    'radio': () => {
+      if (!isPlaying) {
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00' }}>
+            <strong>Radio enabled!</strong>
+            <div>Valid commands: { validRadioCommands.join(', ') }</div>
+          </span>
+        </div>
+      </>);
+      } else {
+        pushToHistory(<>
+          <div>
+            <span style={{ color: '#F9EF00' }}>
+              <strong>Radio off.</strong>
+            </span>
+          </div>
+        </>);
+      }
+      setIsPlaying(!isPlaying); // Toggle present state
+    },
+    'next_station': () => {
+      setUserHasStartedAudio(true);
+      nextRadioStation();
+    },
+    'next': () => {
+      setUserHasStartedAudio(true);
+      nextTrack();
+    },
+    'next_track': () => {
+      setUserHasStartedAudio(true);
+      nextTrack();
+    },
+    'start': () => {
+      setIsPlaying(true);
+    },
+    'play': () => {
+      setIsPlaying(true);
+    },
+    'stop': () => {
+      setIsPlaying(false);
+    },
+  }), [pushToHistory, currentStationIdx, currentTrackIdx, 
+    setCurrentStationIdx, setCurrentTrackIdx, setIsPlaying, isPlaying]);
+
+  const trackUrl = musicTracks[currentStationIdx][currentTrackIdx].url;
 
   return (
     <main className={styles.main}>
@@ -231,6 +324,11 @@ export default function Home() {
         ref={setTerminalRef}
         promptLabel={<>&gt;</>}
         commands={commands}
+      />
+      <AudioPlayer
+        src={trackUrl}
+        isPlaying={isPlaying}
+        onTrackEnded={nextTrack}
       />
       </div>
 
