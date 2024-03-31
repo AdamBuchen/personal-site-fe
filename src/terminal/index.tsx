@@ -2,7 +2,6 @@ import './terminal.css';
 import {ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState} from "react";
 import {TerminalProps} from "./types";
 
-
 export const Terminal = forwardRef(
   (props: TerminalProps, ref: ForwardedRef<HTMLDivElement>) => {
     const {
@@ -13,8 +12,7 @@ export const Terminal = forwardRef(
 
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
-    //const commandsList: string[] = Object.keys(commands);
-    const commandsList: string[] = ["about", "clear", "download_resume", "github", "help", "linkedin", "ls", "view_resume", "rr"];
+    const commandsList = Object.keys(commands);
     var tabbedItemIdx = 0;
     var userEnteredCommand = "";
 
@@ -89,7 +87,7 @@ export const Terminal = forwardRef(
       [commands, input]
     );
 
-    return (
+    return (<>
     <div id='terminal_root' className="terminal" ref={ref} onClick={focusInput}>
       {history.map((line, index) => (
         <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
@@ -112,5 +110,5 @@ export const Terminal = forwardRef(
         </div>
       </div>
     </div>
-  );
+  </>);
 });

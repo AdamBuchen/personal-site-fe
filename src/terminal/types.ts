@@ -18,6 +18,142 @@ export type TerminalProps = {
   commands: TerminalCommands;
 };
 
+export const topLevelValidCommands: string[] = ['about', 'help', 'clear', 'ls', 
+  'download_resume', 'linkedin', 'github', 'radio', 'rr', 'view_resume'];
+
+export const validRadioCommands: string[] = ['next_station', 'next_track', 'next', 
+  'stop', 'play'];
+
+export type MusicTrack = {
+  url: string,
+  title: string,
+  artist: string
+};
+
+export const radioStations: string[] = ["Games Music", "Movie Midi Mania", "Classical Music"];
+ 
+export const musicTracks: MusicTrack[][] = (
+  [
+    [ //Games
+      {
+        url: "/mp3/games/rainbow_road.mp3",
+        title: "Rainbow Road",
+        artist: "MarioKart 64 (N64)",
+      },
+      {
+        url: "/mp3/games/chronotrigger.mp3",
+        title: "Wind Scene",
+        artist: "Chrono Trigger (SNES)",
+      },
+      {
+        url: "/mp3/games/halo.mp3",
+        title: "Opening Suite",
+        artist: "Halo (XBOX)",
+      },
+      {
+        url: "/mp3/games/ducktales.mp3",
+        title: "Moon Surface",
+        artist: "DuckTales (NES)",
+      },
+      {
+        url: "/mp3/games/tetris.mp3",
+        title: "A-Type Music",
+        artist: "Tetris (GB)",
+      },
+      {
+        url: "/mp3/games/wii_shop_channel.mp3",
+        title: "Main Theme",
+        artist: "Shop Channel (WII)",
+      },
+      {
+        url: "/mp3/games/isle_delfino.mp3",
+        title: "Isle Delfino",
+        artist: "Super Mario Sunshine (GC)",
+      },
+      {
+        url: "/mp3/games/sonic_2_emerald_hill.mp3",
+        title: "Emerald Hill Zone - Act 1",
+        artist: "Sonic the Hedgehog 2 (GEN)",
+      },
+    ],
+    [ //Movies
+      {
+        url: "/mp3/movies/duel_of_the_fates.mp3",
+        title: "Duel of the Fates",
+        artist: "John Williams (Star Wars: The Phantom Menace)",
+      },
+      {
+        url: "/mp3/movies/axelf.mp3",
+        title: "Axel F",
+        artist: "Harold Faltermeyer (Beverly Hills Cop)",
+      },
+      {
+        url: "/mp3/movies/pirates.mp3",
+        title: "He's a Pirate",
+        artist: "Badelt / Zimmer (Pirates of the Caribbean)",
+      },
+      {
+        url: "/mp3/movies/toy_story.mp3",
+        title: "You've Got a Friend in Me",
+        artist: "Randy Newman (Toy Story)",
+      },
+      {
+        url: "/mp3/movies/titanic_techno.mp3",
+        title: "My Heart Will Go On (Techno Remix)",
+        artist: "James Horner (Titanic)",
+      },
+      {
+        url: "/mp3/movies/topgun.mp3",
+        title: "Top Gun Anthem",
+        artist: "Harold Faltermeyer (Top Gun)",
+      },
+      {
+        url: "/mp3/movies/rocky.mp3",
+        title: "Gonna Fly Now",
+        artist: "Bill Conti (Rocky)",
+      },
+    ],
+    [ //Classical
+      {
+        url: "/mp3/classical/debussy_clair_de_lune.mp3",
+        title: "Clair de lune",
+        artist: "Claude Debussy",
+      },
+      {
+        url: "/mp3/classical/canon.mp3",
+        title: "Canon in D",
+        artist: "Johann Pachelbel",
+      },
+      {
+        url: "/mp3/classical/moonlight_sonata.mp3",
+        title: "Piano Sonata No. 14",
+        artist: "Ludwig van Beethoven",
+      },
+      {
+        url: "/mp3/classical/vivaldi_autumn.mp3",
+        title: "Concerto No. 3 (Autumn)",
+        artist: "Antonio Vivaldi (The Four Seasons)",
+      },
+      {
+        url: "/mp3/classical/chopin_nocturne.mp3",
+        title: "Nocturne Op. 9 No. 2 (E♭ major)",
+        artist: "Frédéric Chopin",
+      },
+      {
+        url: "/mp3/classical/mozart_eine_kleine_nachtmusik.mp3",
+        title: "Eine kleine Nachtmusik",
+        artist: "Wolfgang Amadeus Mozart",
+      },
+      {
+        url: "/mp3/classical/fur_elise.mp3",
+        title: "Für Elise",
+        artist: "Ludwig van Beethoven",
+      },
+    ],
+  ]
+)
+
+
 export const jsonResume :string = `
 {
   "about": {
