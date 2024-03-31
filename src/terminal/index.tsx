@@ -14,9 +14,10 @@ export const Terminal = forwardRef(
     const [input, setInputValue] = useState<string>('');
     const [userCommandHistory, setUserCommandHistory] = useState<string[]>([]);
     const [currentHistoryOffset, setCurrentHistoryOffset] = useState(0); // history[maxIdx - currentHistoryOffset]
+    const [tabbedItemIdx, setTabbedItemIdx] = useState(0);
+    const [tabbedPartialString, setTabbedPartialString] = useState<string>('');
 
     const commandsList = Object.keys(commands);
-    var tabbedItemIdx = 0;
     var userEnteredCommand = "";
 
     /**
@@ -46,6 +47,12 @@ export const Terminal = forwardRef(
      */
     const handleInputKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Reset the tab index on any keypress except tab
+        if (e.key !== 'Tab' && (tabbedItemIdx !== 0 || tabbedPartialString != '')) {
+          setTabbedItemIdx(0);
+          setTabbedPartialString('');
+        }
+
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
           // Get the last element from the history array (minus offset)
           let commandHistoryIdx = userCommandHistory.length - currentHistoryOffset - 1;
@@ -61,16 +68,26 @@ export const Terminal = forwardRef(
             setCurrentHistoryOffset(currentHistoryOffset + 1);
           }
         } else if (e.key === 'Tab') {
+          //TODO: Make this all way less sad
           e.preventDefault();
           var possibleCommands:string[] = [];
-          const partialCommand = input.toLowerCase().trim();
-          userEnteredCommand = partialCommand;
-          if (partialCommand.length > 0) {
+          let partialString = '';
+          if (tabbedPartialString === '') {
+            partialString = input.toLowerCase().trim();
+            if (partialString !== null) {
+              setTabbedPartialString(partialString);
+              setTabbedItemIdx(0);
+            }
+          } else {
+            partialString = tabbedPartialString;
+          }
+
+          if (partialString.length > 0) {
             for (let i = 0; i < commandsList.length; i++) {    
               const thisCommand = commandsList[i];
               var commandMatches = true;
               for (let k = 0; k < thisCommand.length; k++) {
-                if (thisCommand[k] != partialCommand[k] && partialCommand[k] !== undefined) {
+                if (thisCommand[k] != partialString[k] && partialString[k] !== undefined) {
                   commandMatches = false;
                   break;
                 }
@@ -79,13 +96,25 @@ export const Terminal = forwardRef(
                 possibleCommands.push(thisCommand);
               }
             }
-            if (possibleCommands[tabbedItemIdx] !== undefined) {
+
+            // Sort: shorter commands given precedence, then alphabetically
+            possibleCommands = possibleCommands.sort((a, b) => a.length - b.length || a.localeCompare(b));
+
+            if (tabbedItemIdx >= 0 && tabbedItemIdx < possibleCommands.length) {
               setInputValue(possibleCommands[tabbedItemIdx]);
-              tabbedItemIdx++;
+              let newTabbedItemIdx = tabbedItemIdx + 1;
+              if (newTabbedItemIdx >= possibleCommands.length) {
+                newTabbedItemIdx = 0;
+              }
+
+              setTabbedItemIdx(newTabbedItemIdx);
             } else {
-              tabbedItemIdx = 0;
-              if (possibleCommands.length > 0) {
-                setInputValue(possibleCommands[tabbedItemIdx]);
+              setTabbedItemIdx(0);
+              //setTabbedPartialString("");
+              if ( possibleCommands.length > 0) {
+                setInputValue(possibleCommands[0]);
+              } else {
+                setInputValue(tabbedPartialString);
               }
             }
           }
@@ -104,7 +133,8 @@ export const Terminal = forwardRef(
         }
       },
       [commands, input, userCommandHistory, setUserCommandHistory, 
-        currentHistoryOffset, setCurrentHistoryOffset]
+        currentHistoryOffset, setCurrentHistoryOffset, 
+        tabbedItemIdx, setTabbedItemIdx, tabbedPartialString, setTabbedPartialString]
     );
 
     return (<>
@@ -126,6 +156,7 @@ export const Terminal = forwardRef(
             onChange={handleInputChange}
             // @ts-ignore
             ref={inputRef}
+            autoComplete='off'
           />
         </div>
       </div>

@@ -104,6 +104,9 @@ export default function Home() {
     'reset': () => {
       window.location.reload();
     },
+    // 'exit': () => {
+    //   window.location.replace('about://blank');
+    // },
     'help': async () => {
       pushToHistory(<>
         <div>
