@@ -12,6 +12,9 @@ export const Terminal = forwardRef(
 
     const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
+    const [userCommandHistory, setUserCommandHistory] = useState<string[]>([]);
+    const [currentHistoryOffset, setCurrentHistoryOffset] = useState(0); // history[maxIdx - currentHistoryOffset]
+
     const commandsList = Object.keys(commands);
     var tabbedItemIdx = 0;
     var userEnteredCommand = "";
@@ -43,7 +46,21 @@ export const Terminal = forwardRef(
      */
     const handleInputKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Tab') {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          // Get the last element from the history array (minus offset)
+          let commandHistoryIdx = userCommandHistory.length - currentHistoryOffset - 1;
+          if (commandHistoryIdx >= 0 && commandHistoryIdx < userCommandHistory.length) {
+            setInputValue(userCommandHistory[commandHistoryIdx]);
+          }
+          
+          if (e.key === 'ArrowDown') {
+            // Decrement the offset
+            setCurrentHistoryOffset(currentHistoryOffset - 1);
+          } else {
+            // Increment the offset
+            setCurrentHistoryOffset(currentHistoryOffset + 1);
+          }
+        } else if (e.key === 'Tab') {
           e.preventDefault();
           var possibleCommands:string[] = [];
           const partialCommand = input.toLowerCase().trim();
@@ -73,7 +90,7 @@ export const Terminal = forwardRef(
             }
           }
         } else if (e.key === 'Enter') {
-          const inputLC = input.toLowerCase();
+          const inputLC = input.toLowerCase().trim();
           const commandToExecute = commands?.[inputLC];
           if (commandToExecute) {
             commandToExecute?.();
@@ -81,10 +98,13 @@ export const Terminal = forwardRef(
             const errCmd = commands?.['error'];
             errCmd?.();
           }
+          setUserCommandHistory([...userCommandHistory, inputLC]);
           setInputValue('');
+          setCurrentHistoryOffset(0);
         }
       },
-      [commands, input]
+      [commands, input, userCommandHistory, setUserCommandHistory, 
+        currentHistoryOffset, setCurrentHistoryOffset]
     );
 
     return (<>
