@@ -67,11 +67,17 @@ export default function Home() {
       pushToHistory(<>
         <div>
           <span style={{ color: '#F9EF00' }}>
-            <strong>Radio Station: {radioStationName}</strong><br/>
-            Track: {trackInfo.title}<br />
-            Artist: {trackInfo.artist}
+            <span className='terminal__radio__label'>Station: </span> 
+            <span className='terminal__radio__value'>{radioStationName}</span>
+            <br/>
+            <span className='terminal__radio__label'>Track: </span>
+            <span className='terminal__radio__value'>{trackInfo.title}</span>
+            <br />
+            <span className='terminal__radio__label'>Artist: </span>
+            <span className='terminal__radio__value'>{trackInfo.artist}</span>
           </span>
         </div>
+        <br />
       </>);
     }
 
@@ -87,6 +93,7 @@ export default function Home() {
         <pre>{asciiArt}</pre>
         <div className="terminal__date">{isoStringWithoutMillis}<br /></div>
         <div>Valid commands: { topLevelValidCommands.join(', ') }</div>
+        <br />
       </>
     );
   }, []);
@@ -276,10 +283,11 @@ export default function Home() {
       pushToHistory(<>
         <div>
           <span style={{ color: '#F9EF00' }}>
-            <strong>Radio enabled!</strong>
+            <strong>Radio on!</strong>
             <div>Valid commands: { validRadioCommands.join(', ') }</div>
           </span>
         </div>
+        <br />
       </>);
       } else {
         pushToHistory(<>
@@ -288,6 +296,7 @@ export default function Home() {
               <strong>Radio off.</strong>
             </span>
           </div>
+          <br />
         </>);
       }
       setIsPlaying(!isPlaying); // Toggle present state

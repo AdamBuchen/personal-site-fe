@@ -55,3 +55,12 @@
     font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
     monospace;
 }
+
+.terminal__radio__label {
+    color: #00BFFF;
+}
+
+.terminal__radio__value {
+    
+    color: #FFFAFA;
+}
