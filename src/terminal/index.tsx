@@ -136,7 +136,9 @@ export const Terminal = forwardRef(
             const errCmd = commands?.['error'];
             errCmd?.();
           }
-          setUserCommandHistory([...userCommandHistory, inputLC]);
+          if (inputLC !== '') {
+            setUserCommandHistory([...userCommandHistory, inputLC]);
+          }
           setInputValue('');
           setCurrentHistoryOffset(0);
         }
