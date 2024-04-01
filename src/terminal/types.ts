@@ -21,8 +21,8 @@ export type TerminalProps = {
 export const topLevelValidCommands: string[] = ['about', 'help', 'clear', 'ls', 
   'download_resume', 'linkedin', 'github', 'radio', 'rr', 'view_resume'];
 
-export const validRadioCommands: string[] = ['next_station', 'next_track', 'next', 
-  'stop', 'play'];
+export const validRadioCommands: string[] = ['next_station', 'play', 'pause', 
+  'stop', 'next', 'prev'];
 
 export type MusicTrack = {
   url: string,

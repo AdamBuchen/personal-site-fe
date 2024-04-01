@@ -59,6 +59,17 @@ export default function Home() {
     setIsPlaying(true);
   }
 
+  function previousTrack() {
+    let maxTrackIdx = musicTracks[currentStationIdx].length - 1;
+    let newTrackIdx = currentTrackIdx - 1;
+    if (newTrackIdx < 0) {
+      newTrackIdx = maxTrackIdx;
+    }
+  
+    setCurrentTrackIdx(newTrackIdx);
+    setIsPlaying(true);
+  }
+
   useEffect(() => {
 
     const radioStationName = radioStations[currentStationIdx];
@@ -318,6 +329,10 @@ export default function Home() {
       setUserHasStartedAudio(true);
       nextTrack();
     },
+    'prev': () => {
+      setUserHasStartedAudio(true);
+      previousTrack();
+    },
     'next_track': () => {
       setUserHasStartedAudio(true);
       nextTrack();
@@ -328,8 +343,27 @@ export default function Home() {
     'play': () => {
       setIsPlaying(true);
     },
+    'pause': () => {
+      setIsPlaying(false);
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00' }}>
+            <strong>Paused.</strong>
+          </span>
+        </div>
+        <br />
+      </>);
+    },
     'stop': () => {
       setIsPlaying(false);
+      pushToHistory(<>
+        <div>
+          <span style={{ color: '#F9EF00' }}>
+            <strong>Stopped.</strong>
+          </span>
+        </div>
+        <br />
+      </>);
     },
   }), [pushToHistory, currentStationIdx, currentTrackIdx, 
     setCurrentStationIdx, setCurrentTrackIdx, setIsPlaying, isPlaying]);
