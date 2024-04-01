@@ -160,6 +160,7 @@ export default function Home() {
           }) }
           </ul>
         </div>
+        <br />
     </>);
     },
     'download_resume': async () => {

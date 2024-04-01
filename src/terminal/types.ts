@@ -19,8 +19,8 @@ export type TerminalProps = {
   inputRef: MutableRefObject<HTMLInputElement | undefined>;
 };
 
-export const topLevelValidCommands: string[] = ['about', 'help', 'clear', 'ls', 
-  'cat', 'download_resume', 'linkedin', 'github', 'radio', 'reset', 'rr', 'view_resume'];
+export const topLevelValidCommands: string[] = ['about', 'cat', 'download_resume',
+  'clear', 'help', 'ls', 'linkedin', 'github', 'radio', 'reset', 'rr', 'view_resume'];
 
 export const validRadioCommands: string[] = ['next_station', 'play', 'pause', 
   'stop', 'next', 'prev'];
