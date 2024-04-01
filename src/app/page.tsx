@@ -7,6 +7,7 @@ import {useTerminal} from "../terminal/hooks";
 import {useEffect, useMemo, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
 import {AudioPlayer} from "../audioplayer/AudioPlayer";
+import {Cat} from "../cat/Cat";
 
 export default function Home() {
   const {
@@ -277,6 +278,14 @@ export default function Home() {
         <br />
       </>
     );
+    },
+    'cat': () => {
+      pushToHistory(<>
+        <Cat 
+          isVisible={true}
+        />
+      </>);
+      pushToHistory(<br />);
     },
     'radio': () => {
       if (!isPlaying) {
