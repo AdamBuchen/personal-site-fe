@@ -95,6 +95,9 @@ export const Terminal = forwardRef(
             for (let i = 0; i < commandsList.length; i++) {    
               const thisCommand = commandsList[i];
               var commandMatches = true;
+              if (partialString.length > thisCommand.length) {
+                continue;
+              }
               for (let k = 0; k < thisCommand.length; k++) {
                 if (thisCommand[k] != partialString[k] && partialString[k] !== undefined) {
                   commandMatches = false;
