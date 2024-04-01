@@ -8,9 +8,9 @@ export const Terminal = forwardRef(
       history = [],
       promptLabel = '>',
       commands = {},
+      inputRef = useRef<HTMLInputElement>(),
     } = props;
 
-    const inputRef = useRef<HTMLInputElement>();
     const [input, setInputValue] = useState<string>('');
     const [userCommandHistory, setUserCommandHistory] = useState<string[]>([]);
     const [currentHistoryOffset, setCurrentHistoryOffset] = useState(0); // history[maxIdx - currentHistoryOffset]

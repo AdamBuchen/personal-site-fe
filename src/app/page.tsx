@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Terminal } from "../terminal";
 import {useTerminal} from "../terminal/hooks";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
 import {AudioPlayer} from "../audioplayer/AudioPlayer";
 import {Cat} from "../cat/Cat";
@@ -18,6 +18,8 @@ export default function Home() {
   } = useTerminal();
 
   let src: string = "";
+
+  const inputRef = useRef<HTMLInputElement>();
 
   const [userHasStartedAudio, setUserHasStartedAudio] = useState(false);
   const [currentStationIdx, setCurrentStationIdx] = useState(0); 
@@ -294,6 +296,7 @@ export default function Home() {
       pushToHistory(<>
         <Cat 
           isVisible={true}
+          inputRef={inputRef}
         />
       </>);
       pushToHistory(<br />);
@@ -379,6 +382,7 @@ export default function Home() {
         ref={setTerminalRef}
         promptLabel={<>&gt;</>}
         commands={commands}
+        inputRef={inputRef}
       />
       <AudioPlayer
         src={trackUrl}

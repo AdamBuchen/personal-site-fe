@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {MutableRefObject, ReactNode} from "react";
 
 export type TerminalHistoryItem = ReactNode | string;
 export type TerminalHistory = TerminalHistoryItem[];
@@ -16,10 +16,11 @@ export type TerminalProps = {
   history: TerminalHistory;
   promptLabel?: TerminalHistoryItem;
   commands: TerminalCommands;
+  inputRef: MutableRefObject<HTMLInputElement | undefined>;
 };
 
 export const topLevelValidCommands: string[] = ['about', 'help', 'clear', 'ls', 
-  'download_resume', 'linkedin', 'github', 'radio', 'rr', 'view_resume'];
+  'cat', 'download_resume', 'linkedin', 'github', 'radio', 'reset', 'rr', 'view_resume'];
 
 export const validRadioCommands: string[] = ['next_station', 'play', 'pause', 
   'stop', 'next', 'prev'];
