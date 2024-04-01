@@ -27,6 +27,14 @@ export const Terminal = forwardRef(
       inputRef.current?.focus();
     });
 
+    useEffect(() => {
+      if (inputRef.current) {
+        const cmdLen = input.length;
+        inputRef.current.focus();
+        inputRef.current.setSelectionRange(cmdLen, cmdLen);
+      }
+    }, [input])
+
     const focusInput = useCallback(() => {
       inputRef.current?.focus();
     }, []);
@@ -54,6 +62,7 @@ export const Terminal = forwardRef(
         }
 
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault();
           // Get the last element from the history array (minus offset)
           let commandHistoryIdx = userCommandHistory.length - currentHistoryOffset - 1;
           if (commandHistoryIdx >= 0 && commandHistoryIdx < userCommandHistory.length) {
