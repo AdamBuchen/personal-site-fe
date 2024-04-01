@@ -143,7 +143,7 @@ export default function Home() {
         <div>
           <ul style={{ color: '#33FF33', listStyleType: 'none' }}>
           { topLevelValidCommands.map((command: string) => {
-              return (<li>{command}</li>);
+              return (<li key={command}>{command}</li>);
           }) }
           </ul>
         </div>
