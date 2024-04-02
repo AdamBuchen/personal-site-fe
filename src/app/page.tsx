@@ -4,12 +4,11 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Terminal } from "../terminal";
 import {useTerminal} from "../terminal/hooks";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
 import {AudioPlayer} from "../audioplayer/AudioPlayer";
 import {Cat} from "../cat/Cat";
 import {Bio} from "../bio/Bio";
-
 export default function Home() {
   const {
     history,
@@ -154,6 +153,7 @@ export default function Home() {
       
       pushToHistory(<>
         <Bio />
+        {/* {<TextBrowser />} */}
         <br />
       </>);
     },
@@ -388,13 +388,22 @@ export default function Home() {
     <main className={styles.main}>
       
       <div className="Home">
-      <Terminal
-        history={history}
+      <div 
+        id='terminal_root'
+        className="terminal"
         ref={setTerminalRef}
-        promptLabel={<>&gt;</>}
-        commands={commands}
-        inputRef={inputRef}
-      />
+        onClick={useCallback(() => {
+          inputRef.current?.focus();
+        }, [])}
+      >
+        <Terminal
+          history={history}
+          promptLabel={<>&gt;</>}
+          commands={commands}
+          inputRef={inputRef}
+        />
+      </div>
+
       <AudioPlayer
         src={trackUrl}
         isPlaying={isPlaying}
@@ -405,3 +414,31 @@ export default function Home() {
     </main>
   );
 }
+
+/*
+
+    <div id='terminal_root' className="terminal" ref={ref} onClick={focusInput}>
+      {history.map((line, index) => (
+        <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
+          {line}
+        </div>
+      ))}
+      <div id='prompt_root' className="terminal__prompt">
+        <div id='prompt_label' className="terminal__prompt__label">{promptLabel}</div>
+        <div id='prompt_input_div' className="terminal__prompt__input">
+          <input
+            id='prompt_input'
+            type='text'
+            spellCheck='false'
+            value={input}
+            onKeyDown={handleInputKeyDown}
+            onChange={handleInputChange}
+            // @ts-ignore
+            ref={inputRef}
+            autoComplete='off'
+          />
+        </div>
+      </div>
+    </div>
+
+*/

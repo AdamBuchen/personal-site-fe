@@ -182,7 +182,6 @@ export const Terminal = forwardRef(
     );
 
     return (<>
-    <div id='terminal_root' className="terminal" ref={ref} onClick={focusInput}>
       {history.map((line, index) => (
         <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
           {line}
@@ -204,6 +203,5 @@ export const Terminal = forwardRef(
           />
         </div>
       </div>
-    </div>
   </>);
 });
