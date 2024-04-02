@@ -2,6 +2,10 @@ import './terminal.css';
 import {ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState} from "react";
 import {TerminalProps} from "./types";
 
+export function TerminalFullScreenHandler(e: React.KeyboardEvent<HTMLInputElement>) {
+  
+}
+
 export const Terminal = forwardRef(
   (props: TerminalProps, ref: ForwardedRef<HTMLDivElement>) => {
     const {
@@ -18,7 +22,6 @@ export const Terminal = forwardRef(
     const [tabbedPartialString, setTabbedPartialString] = useState<string>('');
 
     const commandsList = Object.keys(commands);
-    var userEnteredCommand = "";
 
     /**
      * Focus on the input whenever we render the terminal or click in the terminal
@@ -35,26 +38,7 @@ export const Terminal = forwardRef(
       }
     }, [input])
 
-    const focusInput = useCallback(() => {
-      inputRef.current?.focus();
-    }, []);
-
-
-    /**
-     * When user types something, we update the input value
-     */
-    const handleInputChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.target.value);
-      },
-      []
-    );
-
-    /**
-     * When user presses enter, we execute the command
-     */
-    const handleInputKeyDown = useCallback(
-      (e: React.KeyboardEvent<HTMLInputElement>) => {
+    function defaultTerminalFullScreenHandler(e: React.KeyboardEvent<HTMLInputElement>) {
         // Reset the tab index on any keypress except tab
         if (e.key !== 'Tab' && (tabbedItemIdx !== 0 || tabbedPartialString != '')) {
           setTabbedItemIdx(0);
@@ -63,19 +47,44 @@ export const Terminal = forwardRef(
 
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
           e.preventDefault();
-          // Get the last element from the history array (minus offset)
-          let commandHistoryIdx = userCommandHistory.length - currentHistoryOffset - 1;
-          if (commandHistoryIdx >= 0 && commandHistoryIdx < userCommandHistory.length) {
-            setInputValue(userCommandHistory[commandHistoryIdx]);
-          }
           
+          let newHistoryOffset = currentHistoryOffset;
+          let maxHistoryIdx = userCommandHistory.length - 1;
+
           if (e.key === 'ArrowDown') {
             // Decrement the offset
-            setCurrentHistoryOffset(currentHistoryOffset - 1);
-          } else {
+            if (currentHistoryOffset >= 0) {
+              newHistoryOffset = currentHistoryOffset - 1;
+            } else {
+              newHistoryOffset = 0;
+            }
+          } else { //ArrowUp
             // Increment the offset
-            setCurrentHistoryOffset(currentHistoryOffset + 1);
+            newHistoryOffset = currentHistoryOffset + 1;
           }
+
+          if (maxHistoryIdx < 0) {
+            setInputValue('');
+            setCurrentHistoryOffset(newHistoryOffset);
+          } else {
+            let newHistoryIdx = maxHistoryIdx - newHistoryOffset;
+            if (newHistoryIdx < 0) { // User is at the beginning of the list. newHistoryIdx should remain zero. The offset should be equal to maxIdx
+              newHistoryOffset = maxHistoryIdx;
+            } else if (newHistoryIdx > maxHistoryIdx) { // User is at the end of the list. newHistoryIdx should be equal to maxIdx.
+              newHistoryOffset = 0;
+            }
+
+            setCurrentHistoryOffset(newHistoryOffset);
+
+            // Get the last element from the history array (minus offset)
+            let commandHistoryIdx = maxHistoryIdx - currentHistoryOffset;
+            if (commandHistoryIdx >= 0 && commandHistoryIdx < userCommandHistory.length) {
+              setInputValue(userCommandHistory[commandHistoryIdx]);
+            } else if (commandHistoryIdx < 0) {
+              setInputValue('');
+            }
+          }
+
         } else if (e.key === 'Tab') {
           //TODO: Make this all way less sad
           e.preventDefault();
@@ -145,10 +154,31 @@ export const Terminal = forwardRef(
           setInputValue('');
           setCurrentHistoryOffset(0);
         }
+    }
+
+    const focusInput = useCallback(() => {
+      inputRef.current?.focus();
+    }, []);
+
+
+    /**
+     * When user types something, we update the input value
+     */
+    const handleInputChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(e.target.value);
       },
+      []
+    );
+
+    /**
+     * When user presses enter, we execute the command
+     */
+    const handleInputKeyDown = useCallback(
+      defaultTerminalFullScreenHandler,
       [commands, input, userCommandHistory, setUserCommandHistory, 
-        currentHistoryOffset, setCurrentHistoryOffset, 
-        tabbedItemIdx, setTabbedItemIdx, tabbedPartialString, setTabbedPartialString]
+      currentHistoryOffset, setCurrentHistoryOffset, 
+      tabbedItemIdx, setTabbedItemIdx, tabbedPartialString, setTabbedPartialString]
     );
 
     return (<>

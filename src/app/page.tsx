@@ -8,6 +8,7 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
 import {AudioPlayer} from "../audioplayer/AudioPlayer";
 import {Cat} from "../cat/Cat";
+import {Bio} from "../bio/Bio";
 
 export default function Home() {
   const {
@@ -17,14 +18,14 @@ export default function Home() {
     resetTerminal,
   } = useTerminal();
 
-  let src: string = "";
-
   const inputRef = useRef<HTMLInputElement>();
 
   const [userHasStartedAudio, setUserHasStartedAudio] = useState(false);
   const [currentStationIdx, setCurrentStationIdx] = useState(0); 
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [userInFullScreenProgram, setUserInFullScreenProgram] = useState(false);
+  const [currentFullScreenHandler, setCurrentFullScreenHandler] = useState(() => {});
 
   const asciiArt: string = String.raw`
    _____       .___             __________              .__                                            
@@ -146,6 +147,14 @@ export default function Home() {
               The front-end was written in React with TypeScript.<br />
           </span>
         </div>
+      </>);
+    },
+    'bio': () => {
+      setUserInFullScreenProgram(true);
+      
+      pushToHistory(<>
+        <Bio />
+        <br />
       </>);
     },
     'clear': async () => {
@@ -370,7 +379,8 @@ export default function Home() {
       </>);
     },
   }), [pushToHistory, currentStationIdx, currentTrackIdx, 
-    setCurrentStationIdx, setCurrentTrackIdx, setIsPlaying, isPlaying]);
+    setCurrentStationIdx, setCurrentTrackIdx, setIsPlaying, isPlaying,
+    userInFullScreenProgram, setUserInFullScreenProgram]);
 
   const trackUrl = musicTracks[currentStationIdx][currentTrackIdx].url;
 
