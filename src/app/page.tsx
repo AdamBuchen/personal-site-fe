@@ -23,8 +23,8 @@ export default function Home() {
   const [currentStationIdx, setCurrentStationIdx] = useState(0); 
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [userInFullScreenProgram, setUserInFullScreenProgram] = useState(false);
-  const [currentFullScreenHandler, setCurrentFullScreenHandler] = useState(() => {});
+  const [inTerminalApp, setInTerminalApp] = useState(true);
+  const [inBioApp, setInBioApp] = useState(false);
 
   const asciiArt: string = String.raw`
    _____       .___             __________              .__                                            
@@ -36,6 +36,16 @@ export default function Home() {
 
 
 `;
+
+  function launchBioApp() {
+    setInBioApp(true);
+    setInTerminalApp(false);
+  }
+
+  function quitToTerminal() {
+    setInBioApp(false);
+    setInTerminalApp(true);
+  }
 
   function nextRadioStation() {
 
@@ -149,13 +159,8 @@ export default function Home() {
       </>);
     },
     'bio': () => {
-      setUserInFullScreenProgram(true);
-      
-      pushToHistory(<>
-        <Bio />
-        {/* {<TextBrowser />} */}
-        <br />
-      </>);
+      setInBioApp(true);
+      setInTerminalApp(false);
     },
     'clear': async () => {
       resetTerminal();
@@ -380,7 +385,7 @@ export default function Home() {
     },
   }), [pushToHistory, currentStationIdx, currentTrackIdx, 
     setCurrentStationIdx, setCurrentTrackIdx, setIsPlaying, isPlaying,
-    userInFullScreenProgram, setUserInFullScreenProgram]);
+    inTerminalApp, setInTerminalApp, inBioApp, setInBioApp]);
 
   const trackUrl = musicTracks[currentStationIdx][currentTrackIdx].url;
 
@@ -396,12 +401,25 @@ export default function Home() {
           inputRef.current?.focus();
         }, [])}
       >
-        <Terminal
-          history={history}
-          promptLabel={<>&gt;</>}
-          commands={commands}
-          inputRef={inputRef}
-        />
+        {inTerminalApp && 
+          <Terminal
+            history={history}
+            promptLabel={<>&gt;</>}
+            commands={commands}
+            inputRef={inputRef}
+          /> 
+        }
+
+        {!inTerminalApp && inBioApp &&
+          <Bio
+            history={history}
+            promptLabel={<>&gt;</>}
+            commands={commands}
+            inputRef={inputRef}
+            exitCommandCallback={quitToTerminal}
+          />
+        }
+        
       </div>
 
       <AudioPlayer

@@ -19,6 +19,14 @@ export type TerminalProps = {
   inputRef: MutableRefObject<HTMLInputElement | undefined>;
 };
 
+export type BioProps = {
+  history: TerminalHistory;
+  promptLabel?: TerminalHistoryItem;
+  commands: TerminalCommands;
+  inputRef: MutableRefObject<HTMLInputElement | undefined>;
+  exitCommandCallback: () => void;
+};
+
 export const topLevelValidCommands: string[] = ['about', 'cat', 'download_resume',
   'clear', 'help', 'ls', 'linkedin', 'github', 'radio', 'reset', 'rr', 'view_resume'];
 
