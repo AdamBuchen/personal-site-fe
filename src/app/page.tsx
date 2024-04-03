@@ -19,7 +19,6 @@ export default function Home() {
 
   const inputRef = useRef<HTMLInputElement>();
 
-  const [userHasStartedAudio, setUserHasStartedAudio] = useState(false);
   const [currentStationIdx, setCurrentStationIdx] = useState(0); 
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -340,19 +339,15 @@ export default function Home() {
       setIsPlaying(!isPlaying); // Toggle present state
     },
     'next_station': () => {
-      setUserHasStartedAudio(true);
       nextRadioStation();
     },
     'next': () => {
-      setUserHasStartedAudio(true);
       nextTrack();
     },
     'prev': () => {
-      setUserHasStartedAudio(true);
       previousTrack();
     },
     'next_track': () => {
-      setUserHasStartedAudio(true);
       nextTrack();
     },
     'start': () => {
