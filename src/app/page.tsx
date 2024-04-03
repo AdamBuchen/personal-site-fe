@@ -6,9 +6,12 @@ import { Terminal } from "../terminal";
 import {useTerminal} from "../terminal/hooks";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
+
+import {MobileHome} from "../mobile/MobileHome";
 import {AudioPlayer} from "../audioplayer/AudioPlayer";
 import {Cat} from "../cat/Cat";
 import {Bio} from "../bio/Bio";
+
 export default function Home() {
   const {
     history,
@@ -18,12 +21,30 @@ export default function Home() {
   } = useTerminal();
 
   const inputRef = useRef<HTMLInputElement>();
+  const minTerminalWidth = 1024;
 
   const [currentStationIdx, setCurrentStationIdx] = useState(0); 
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [inTerminalApp, setInTerminalApp] = useState(true);
   const [inBioApp, setInBioApp] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // If we have a mobile or small viewport, display alternate version of site
+  // Run this once, to attach an event listener to the window that calls
+  // setWindowWidth
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    }
+
+  }, []);
 
   const asciiArt: string = String.raw`
    _____       .___             __________              .__                                            
@@ -380,21 +401,35 @@ export default function Home() {
     },
   }), [pushToHistory, currentStationIdx, currentTrackIdx, 
     setCurrentStationIdx, setCurrentTrackIdx, setIsPlaying, isPlaying,
-    inTerminalApp, setInTerminalApp, inBioApp, setInBioApp]);
+    inTerminalApp, setInTerminalApp, inBioApp, setInBioApp, windowWidth,
+    setWindowWidth]);
 
   const trackUrl = musicTracks[currentStationIdx][currentTrackIdx].url;
 
-  return (
+  const displayMobileSite = (windowWidth < minTerminalWidth);
+  const terminalOnClickHandler = useCallback(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  if(displayMobileSite) {
+    return (<>
+      <main className={styles.main}>
+        <MobileHome />
+      </main>
+    </>);
+  } else return (
     <main className={styles.main}>
       
+      {/* Start Home Div */}
       <div className="Home">
+
+
+      {/* Start Terminal Div */}
       <div 
         id='terminal_root'
         className="terminal"
         ref={setTerminalRef}
-        onClick={useCallback(() => {
-          inputRef.current?.focus();
-        }, [])}
+        onClick={terminalOnClickHandler}
       >
         {inTerminalApp && 
           <Terminal
@@ -414,8 +449,8 @@ export default function Home() {
             exitCommandCallback={quitToTerminal}
           />
         }
-        
       </div>
+      {/* End Terminal Div */}
 
       <AudioPlayer
         src={trackUrl}
@@ -423,35 +458,9 @@ export default function Home() {
         onTrackEnded={nextTrack}
       />
       </div>
-
+      {/* End Home Div */}
+      
     </main>
   );
+
 }
-
-/*
-
-    <div id='terminal_root' className="terminal" ref={ref} onClick={focusInput}>
-      {history.map((line, index) => (
-        <div className="terminal__line" key={`terminal-line-${index}-${line}`}>
-          {line}
-        </div>
-      ))}
-      <div id='prompt_root' className="terminal__prompt">
-        <div id='prompt_label' className="terminal__prompt__label">{promptLabel}</div>
-        <div id='prompt_input_div' className="terminal__prompt__input">
-          <input
-            id='prompt_input'
-            type='text'
-            spellCheck='false'
-            value={input}
-            onKeyDown={handleInputKeyDown}
-            onChange={handleInputChange}
-            // @ts-ignore
-            ref={inputRef}
-            autoComplete='off'
-          />
-        </div>
-      </div>
-    </div>
-
-*/
