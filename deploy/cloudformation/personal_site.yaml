@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Stack for AdamBuchen.com
+
+Resources:
+
+  PersonalSiteHostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: adambuchen.com
+
+  # DNS - adambuchen.com
+  PersonalSiteDnsRecordSetGroup:
+    Type: "AWS::Route53::RecordSetGroup"
+    Properties:
+      HostedZoneId: !Ref PersonalSiteHostedZone
+      RecordSets:
+        - Name: "adambuchen.com." # apex domain
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2 # I.e.: this is an alias record.
+            DNSName: !GetAtt PersonalSiteWebDistribution.DomainName
+        - Name: "adambuchen.com." # apex domain
+          Type: AAAA
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2 # I.e.: this is an alias record.
+            DNSName: !GetAtt PersonalSiteWebDistribution.DomainName
+        - Name: !Sub "www.adambuchen.com."
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2 # I.e.: this is an alias record.
+            DNSName: !GetAtt PersonalSiteWebDistribution.DomainName
+        - Name: "www.adambuchen.com."
+          Type: AAAA
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2 # I.e.: this is an alias record.
+            DNSName: !GetAtt PersonalSiteWebDistribution.DomainName
+
+  PersonalSiteWildcardDomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: adambuchen.com
+      SubjectAlternativeNames:
+        - "*.adambuchen.com"
+      DomainValidationOptions:
+        - DomainName: adambuchen.com
+          HostedZoneId: !Ref PersonalSiteHostedZone
+      ValidationMethod: DNS
+
+  PersonalSiteWebStaticAssetsBucket:
+    Type: AWS::S3::Bucket
+    Properties: {}
+
+  PersonalSiteWebDistributionOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: "The identity used by the CloudFront distribution to serve static web assets from their bucket."
+
+  PersonalSiteWebBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PersonalSiteWebStaticAssetsBucket
+      PolicyDocument:
+        Statement:
+          - Action: [s3:GetObject]
+            Effect: Allow
+            Resource: !Sub "arn:aws:s3:::${PersonalSiteWebStaticAssetsBucket}/*"
+            Principal:
+              CanonicalUser: !GetAtt PersonalSiteWebDistributionOriginAccessIdentity.S3CanonicalUserId
+
+  PersonalSiteWebDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - "adambuchen.com"
+          - "www.adambuchen.com"
+        DefaultCacheBehavior:
+          TargetOriginId: PersonalSiteWebOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          # CachingDisabled
+          # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-policy-caching-disabled
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          # CORS-S3Origin
+          # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html#managed-origin-request-policy-cors-s3
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf
+          # CORS-With-Preflight
+          # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html#managed-response-headers-policies-cors-preflight
+          ResponseHeadersPolicyId: 5cc3b908-e619-4b99-88e5-2cf7f45965bd          
+        Origins:
+          - Id: PersonalSiteWebOrigin
+            DomainName: !GetAtt PersonalSiteWebStaticAssetsBucket.DomainName
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${PersonalSiteWebDistributionOriginAccessIdentity}"
+        Enabled: true
+        ViewerCertificate:
+          AcmCertificateArn: !Ref PersonalSiteWildcardDomainCertificate
+          MinimumProtocolVersion: TLSv1
+          SslSupportMethod: sni-only
+        DefaultRootObject: index.html

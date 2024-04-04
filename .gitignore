@@ -1,5 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# aws-sam build stuff
+/deploy/cloudformation/.aws-sam
+/deploy/cloudformation/*.toml
+
 # dependencies
 /node_modules
 /.pnp
