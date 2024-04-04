@@ -424,7 +424,7 @@ export default function Home() {
     <main className={styles.main}>
       
       {/* Start Home Div */}
-      <div className="Home">
+      {/* <div className="Home" style={{ height: '768px', maxHeight: '768px', flexGrow: 1 }}> */}
 
 
       {/* Start Terminal Div */}
@@ -460,7 +460,7 @@ export default function Home() {
         isPlaying={isPlaying}
         onTrackEnded={nextTrack}
       />
-      </div>
+      {/* </div> */}
       {/* End Home Div */}
       
     </main>

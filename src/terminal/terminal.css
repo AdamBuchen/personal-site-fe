@@ -1,6 +1,7 @@
 .terminal {
-    height: 600px;
-    width: 1024px;
+    flex-grow: 1;
+    max-height: 768px;
+
     overflow-y: auto;
     background-color: #282828;
     color: #33FF33;
@@ -11,6 +12,9 @@
     monospace;
     text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 5%;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .terminal__line {
