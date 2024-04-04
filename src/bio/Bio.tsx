@@ -14,7 +14,7 @@ export function Bio({history, promptLabel, commands, inputRef, exitCommandCallba
      */
         const handleInputKeyDown = useCallback(
             defaultBioFullScreenHandler,
-            [commands]
+            [exitCommandCallback]
           );
 
     /**
@@ -159,7 +159,7 @@ export function Bio({history, promptLabel, commands, inputRef, exitCommandCallba
         </div>
         ))} */}
         <div className="terminal__line">
-            BIO-APP: You're in the bio app<br/>
+            BIO-APP: You&apos;re in the bio app<br/>
             Press Q to quit.
         </div>
         <div id='prompt_root' className="terminal__prompt">

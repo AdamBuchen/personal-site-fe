@@ -9,11 +9,6 @@ type CatProps = {
 export function Cat({ isVisible, inputRef }:CatProps) {
 
     const captionRef = useRef<HTMLParagraphElement>(null);
-    // useEffect(() => {
-    //     if (isVisible && captionRef.current) {
-    //         captionRef.current.scrollIntoView({ behavior: 'smooth', block: 'end'});
-    //     }
-    // }, [isVisible])
 
     const maxImgNum = 40;
     function getRandomInt(n: number): number {
@@ -41,7 +36,7 @@ export function Cat({ isVisible, inputRef }:CatProps) {
                         }
                     }, 100);
                 }
-            }}></img>
+            }} alt={caption}></img>
             <p ref={captionRef} className="cat__caption">{caption}</p>
         </div>
     </>);

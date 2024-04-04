@@ -22,15 +22,18 @@ export function AudioPlayer({ src, isPlaying, onTrackEnded }:AudioPlayerProps) {
     if (isPlaying) {
       ref.current?.play();
     }
-  }, [src]);
+  }, [src, isPlaying]);
 
   useEffect(() => {
     function handleEnded(e: Event) {
       onTrackEnded();
     };
     
-    ref.current?.addEventListener('ended', handleEnded);
-    return () => ref.current?.removeEventListener('ended', handleEnded);
+    if (ref.current) {
+      const currentRef = ref.current;
+      currentRef.addEventListener('ended', handleEnded);
+      return () => currentRef.removeEventListener('ended', handleEnded);
+    }
 
   }, [onTrackEnded]); // Only run this once
 

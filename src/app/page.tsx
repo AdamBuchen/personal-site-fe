@@ -1,8 +1,7 @@
 "use client"
 
-import Image from "next/image";
 import styles from "./page.module.css";
-import { Terminal } from "../terminal";
+import Terminal from "../terminal";
 import {useTerminal} from "../terminal/hooks";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
@@ -28,7 +27,11 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [inTerminalApp, setInTerminalApp] = useState(true);
   const [inBioApp, setInBioApp] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+  }, [setWindowWidth])
 
   // If we have a mobile or small viewport, display alternate version of site
   // Run this once, to attach an event listener to the window that calls
@@ -44,7 +47,7 @@ export default function Home() {
       window.removeEventListener('resize', handleResize);
     }
 
-  }, []);
+  }, [setWindowWidth]);
 
   const asciiArt: string = String.raw`
    _____       .___             __________              .__                                            
@@ -67,18 +70,20 @@ export default function Home() {
     setInTerminalApp(true);
   }
 
-  function nextRadioStation() {
 
-    let maxStationIdx = radioStations.length - 1;
-    let newStationIdx = currentStationIdx + 1;
-    if (newStationIdx > maxStationIdx) {
-      newStationIdx = 0;
-    }
-
-    setCurrentStationIdx(newStationIdx);
-    setCurrentTrackIdx(0);
-    setIsPlaying(true);
-  }
+  const nextRadioStation = useCallback(
+    () => {
+      let maxStationIdx = radioStations.length - 1;
+      let newStationIdx = currentStationIdx + 1;
+      if (newStationIdx > maxStationIdx) {
+        newStationIdx = 0;
+      }
+  
+      setCurrentStationIdx(newStationIdx);
+      setCurrentTrackIdx(0);
+      setIsPlaying(true);
+    }, []
+  );
 
   function nextTrack() {
     let maxTrackIdx = musicTracks[currentStationIdx].length - 1;
@@ -125,7 +130,7 @@ export default function Home() {
       </>);
     }
 
-  }, [currentStationIdx, currentTrackIdx, isPlaying, setIsPlaying]);
+  }, [currentStationIdx, currentTrackIdx, isPlaying, setIsPlaying, pushToHistory]);
 
   useEffect(() => {
     resetTerminal();
@@ -140,7 +145,7 @@ export default function Home() {
         <br />
       </>
     );
-  }, []);
+  }, [asciiArt, pushToHistory, resetTerminal]);
 
   const commands = useMemo(() => ({
     'error': async() => {
@@ -288,7 +293,7 @@ export default function Home() {
         <div>
           <span style={{ color: '#F9EF00' }}>
             <center>
-              <strong>We know the game and we're gonna play it</strong>
+              <strong>We know the game and we&apos;re gonna play it</strong>
             </center>
           </span>
         </div>
@@ -319,7 +324,7 @@ export default function Home() {
       pushToHistory(<>
         <br />
         <span style={{ color: '#F9EF00' }}>
-            <strong>Adam Buchen's Resume</strong>
+            <strong>Adam Buchen&apos;s Resume</strong>
         </span>
         <br />
         <pre>{jsonResume}</pre>
@@ -399,10 +404,8 @@ export default function Home() {
         <br />
       </>);
     },
-  }), [pushToHistory, currentStationIdx, currentTrackIdx, 
-    setCurrentStationIdx, setCurrentTrackIdx, setIsPlaying, isPlaying,
-    inTerminalApp, setInTerminalApp, inBioApp, setInBioApp, windowWidth,
-    setWindowWidth]);
+  }), [pushToHistory, setIsPlaying, isPlaying, setInTerminalApp, setInBioApp, 
+     nextRadioStation, nextTrack, previousTrack, resetTerminal]);
 
   const trackUrl = musicTracks[currentStationIdx][currentTrackIdx].url;
 
@@ -411,7 +414,9 @@ export default function Home() {
     inputRef.current?.focus();
   }, []);
 
-  if(displayMobileSite) {
+  if(windowWidth === 0) {
+    return(<></>);
+  } else if(displayMobileSite) {
     return (<>
       <MobileHome />
     </>);

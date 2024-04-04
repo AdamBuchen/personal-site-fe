@@ -22,7 +22,7 @@ export function ScrollingText({fullText, typingSpeedMs, isStyledLink, href, targ
 
             return () => clearInterval(cursorBlinkInterval);
         }
-    }, [displayedText, fullText]);
+    }, [displayedText, fullText, typingSpeedMs]);
 
     useEffect(() => {
         if (displayedText.length < fullText.length) {
@@ -35,7 +35,7 @@ export function ScrollingText({fullText, typingSpeedMs, isStyledLink, href, targ
             // Stop the cursor from blinking once the text is fully typed
             setIsCursorVisible(false);
         }
-    }, [displayedText, fullText]);
+    }, [displayedText, fullText, typingSpeedMs]);
 
     if (href != "") {
         return (

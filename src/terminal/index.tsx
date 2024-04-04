@@ -6,13 +6,13 @@ export function TerminalFullScreenHandler(e: React.KeyboardEvent<HTMLInputElemen
   
 }
 
-export const Terminal = forwardRef(
+const Terminal = forwardRef(
   (props: TerminalProps, ref: ForwardedRef<HTMLDivElement>) => {
     const {
       history = [],
       promptLabel = '>',
       commands = {},
-      inputRef = useRef<HTMLInputElement>(),
+      inputRef,
     } = props;
 
     const [input, setInputValue] = useState<string>('');
@@ -36,7 +36,7 @@ export const Terminal = forwardRef(
         inputRef.current.focus();
         inputRef.current.setSelectionRange(cmdLen, cmdLen);
       }
-    }, [input])
+    }, [input, inputRef])
 
     function defaultTerminalFullScreenHandler(e: React.KeyboardEvent<HTMLInputElement>) {
         // Reset the tab index on any keypress except tab
@@ -158,7 +158,7 @@ export const Terminal = forwardRef(
 
     const focusInput = useCallback(() => {
       inputRef.current?.focus();
-    }, []);
+    }, [inputRef]);
 
 
     /**
@@ -177,7 +177,7 @@ export const Terminal = forwardRef(
     const handleInputKeyDown = useCallback(
       defaultTerminalFullScreenHandler,
       [commands, input, userCommandHistory, setUserCommandHistory, 
-      currentHistoryOffset, setCurrentHistoryOffset, 
+      currentHistoryOffset, setCurrentHistoryOffset, commandsList,
       tabbedItemIdx, setTabbedItemIdx, tabbedPartialString, setTabbedPartialString]
     );
 
@@ -205,3 +205,7 @@ export const Terminal = forwardRef(
       </div>
   </>);
 });
+
+Terminal.displayName = 'Terminal App';
+
+export default Terminal;
