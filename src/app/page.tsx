@@ -413,9 +413,7 @@ export default function Home() {
 
   if(displayMobileSite) {
     return (<>
-      <main className={styles.main}>
-        <MobileHome />
-      </main>
+      <MobileHome />
     </>);
   } else return (
     <main className={styles.main}>
