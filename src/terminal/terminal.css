@@ -1,6 +1,7 @@
-.terminal {
+.terminal__container {
     flex-grow: 1;
     max-height: 768px;
+    width: 1024px;
 
     overflow-y: auto;
     background-color: #282828;

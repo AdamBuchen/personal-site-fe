@@ -430,7 +430,7 @@ export default function Home() {
       {/* Start Terminal Div */}
       <div 
         id='terminal_root'
-        className="terminal"
+        className="terminal__container"
         ref={setTerminalRef}
         onClick={terminalOnClickHandler}
       >
