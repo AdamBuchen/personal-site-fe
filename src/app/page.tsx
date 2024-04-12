@@ -19,16 +19,21 @@ export default function Home() {
     resetTerminal,
   } = useTerminal();
 
+  enum TerminalApps {
+    Terminal = 1,
+    Bio,
+    WPMTest
+  }
+
   const inputRef = useRef<HTMLInputElement>();
   const minTerminalWidth = 1024;
 
   const [currentStationIdx, setCurrentStationIdx] = useState(0); 
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [inTerminalApp, setInTerminalApp] = useState(true);
-  const [inBioApp, setInBioApp] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
-
+  const [runningTerminalApp, setRunningTerminalApp] = useState(TerminalApps.Terminal);
+  
   useEffect(() => {
     setWindowWidth(window.innerWidth);
   }, [setWindowWidth])
@@ -49,6 +54,17 @@ export default function Home() {
 
   }, [setWindowWidth]);
 
+  function quitToTerminal() {
+    setRunningTerminalApp(TerminalApps.Terminal);
+  }
+
+  //Turn off the radio when we switch apps
+  useEffect(() => {
+    if (runningTerminalApp != TerminalApps.Terminal) {
+      setIsPlaying(false);
+    }
+  }, [runningTerminalApp]);
+
   const asciiArt: string = String.raw`
    _____       .___             __________              .__                                            
   /  _  \    __| _/____    _____\______   \__ __   ____ |  |__   ____   ____       ____  ____   _____  
@@ -59,17 +75,6 @@ export default function Home() {
 
 
 `;
-
-  function launchBioApp() {
-    setInBioApp(true);
-    setInTerminalApp(false);
-  }
-
-  function quitToTerminal() {
-    setInBioApp(false);
-    setInTerminalApp(true);
-  }
-
 
   function nextRadioStation() {
     let maxStationIdx = radioStations.length - 1;
@@ -182,8 +187,7 @@ export default function Home() {
       </>);
     },
     'bio': () => {
-      setInBioApp(true);
-      setInTerminalApp(false);
+      setRunningTerminalApp(TerminalApps.Bio);
     },
     'clear': async () => {
       resetTerminal();
@@ -402,8 +406,8 @@ export default function Home() {
         <br />
       </>);
     },
-  }), [pushToHistory, setIsPlaying, isPlaying, setInTerminalApp, setInBioApp, 
-     nextRadioStation, nextTrack, previousTrack, resetTerminal]);
+  }), [pushToHistory, setIsPlaying, isPlaying, nextRadioStation, nextTrack,
+      previousTrack, resetTerminal, setRunningTerminalApp, runningTerminalApp]);
 
   const trackUrl = musicTracks[currentStationIdx][currentTrackIdx].url;
 
@@ -432,7 +436,7 @@ export default function Home() {
         ref={setTerminalRef}
         onClick={terminalOnClickHandler}
       >
-        {inTerminalApp && 
+        {runningTerminalApp == TerminalApps.Terminal && 
           <Terminal
             history={history}
             promptLabel={<>&gt;</>}
@@ -441,7 +445,7 @@ export default function Home() {
           /> 
         }
 
-        {!inTerminalApp && inBioApp &&
+        {runningTerminalApp == TerminalApps.Bio &&
           <Bio
             history={history}
             promptLabel={<>&gt;</>}
