@@ -10,6 +10,7 @@ import {MobileHome} from "../mobile/MobileHome";
 import {AudioPlayer} from "../audioplayer/AudioPlayer";
 import {Cat} from "../cat/Cat";
 import {Bio} from "../bio/Bio";
+import { WPMTestProps, WPMTest } from "../wpmtest/WPMTest";
 
 export default function Home() {
   const {
@@ -188,6 +189,9 @@ export default function Home() {
     },
     'bio': () => {
       setRunningTerminalApp(TerminalApps.Bio);
+    },
+    'wpm_test': () => {
+      setRunningTerminalApp(TerminalApps.WPMTest);
     },
     'clear': async () => {
       resetTerminal();
@@ -450,6 +454,13 @@ export default function Home() {
             history={history}
             promptLabel={<>&gt;</>}
             commands={commands}
+            inputRef={inputRef}
+            exitCommandCallback={quitToTerminal}
+          />
+        }
+
+        {runningTerminalApp == TerminalApps.WPMTest &&
+          <WPMTest
             inputRef={inputRef}
             exitCommandCallback={quitToTerminal}
           />
