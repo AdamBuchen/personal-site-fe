@@ -71,19 +71,17 @@ export default function Home() {
   }
 
 
-  const nextRadioStation = useCallback(
-    () => {
-      let maxStationIdx = radioStations.length - 1;
-      let newStationIdx = currentStationIdx + 1;
-      if (newStationIdx > maxStationIdx) {
-        newStationIdx = 0;
-      }
-  
-      setCurrentStationIdx(newStationIdx);
-      setCurrentTrackIdx(0);
-      setIsPlaying(true);
-    }, []
-  );
+  function nextRadioStation() {
+    let maxStationIdx = radioStations.length - 1;
+    let newStationIdx = currentStationIdx + 1;
+    if (newStationIdx > maxStationIdx) {
+      newStationIdx = 0;
+    }
+
+    setCurrentStationIdx(newStationIdx);
+    setCurrentTrackIdx(0);
+    setIsPlaying(true);
+  };
 
   function nextTrack() {
     let maxTrackIdx = musicTracks[currentStationIdx].length - 1;
