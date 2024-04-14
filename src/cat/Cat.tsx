@@ -2,11 +2,10 @@ import { MutableRefObject, useEffect, useRef } from 'react';
 import './cat.css';
 
 type CatProps = {
-    isVisible: boolean
     inputRef: MutableRefObject<HTMLInputElement | undefined>;
 }
 
-export function Cat({ isVisible, inputRef }:CatProps) {
+export function Cat({ inputRef }:CatProps) {
 
     const captionRef = useRef<HTMLParagraphElement>(null);
 

@@ -341,7 +341,6 @@ export default function Home() {
     'cat': () => {
       pushToHistory(<>
         <Cat 
-          isVisible={true}
           inputRef={inputRef}
         />
       </>);
