@@ -10,8 +10,6 @@
     bottom: 0px;
     left: 0px;
     
-
-
     align-items: center;
     justify-content: center;
 }
@@ -34,21 +32,10 @@
     text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 
     border-style: dashed;
+    outline: none;
     padding: 50px;
     margin: 50px;
 
-}
-
-.wpm__test__prompt__input {
-    background-color: transparent;
-    color: #33FF33;
-    font-weight: 900;
-    border: 0;
-    outline: none;
-    font-size: 20px;
-    line-height: 1.42;
-    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
-    monospace;
 }
 
 .wpm__test__prompt__instructions {

@@ -7,12 +7,12 @@ export type WPMTestProps = {
 
 export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
-    const inputRef = useRef<HTMLTextAreaElement>();
+    const promptDisplayDivRef = useRef<HTMLDivElement>(null);
 
     const testPrompt = `Foxes vulpis, swift and agile, dart through the underbrush with vibrant energy. In the moonlit forests, their eyes gleam with a clever spark, scanning the terrain for any sign of movement. The rustle of leaves underfoot betrays the presence of nocturnal creatures, while overhead, the canopy whispers secrets of the ancient woodland. Red coats blend into the autumnal hues, the foxes' movements harmonious with the falling leaves.`;
 
     useEffect(() => {
-        inputRef.current?.focus();
+        promptDisplayDivRef.current?.focus();
     });
 
     /**
@@ -27,15 +27,16 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
      * When user types something, we update the input value
      */
     const handleInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        (e: React.ChangeEvent<HTMLDivElement>) => {
             //alert(e.target.value);
         },
         []
         );
 
-    function wpmTestKeyboardHandler(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    function wpmTestKeyboardHandler(e: React.KeyboardEvent<HTMLDivElement>) {
 
-        e.preventDefault();
+        alert('key pressed');
+        //e.preventDefault();
 
         if (e.key === 'q') {
             exitCommandCallback();
@@ -53,7 +54,12 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             <span className="wpm__test__prompt__instructions">
                 Begin typing the text below when ready
             </span>
-            <div className="wpm__test__prompt__div">
+            <div className="wpm__test__prompt__div" tabIndex={0}
+                 ref={promptDisplayDivRef}
+                 id='prompt_input_div'
+                 onKeyDown={handleInputKeyDown}
+                 onChange={handleInputChange}
+            >
 
                 {testPrompt}
             {/* <textarea
