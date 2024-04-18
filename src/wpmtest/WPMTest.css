@@ -1,0 +1,66 @@
+.wpm__test__container {
+
+    display: flex;
+    flex-flow: column wrap;
+
+    position: absolute;
+
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    
+
+
+    align-items: center;
+    justify-content: center;
+}
+
+.wpm__test__prompt__div {
+    display: flex;
+     /* flex-grow: 1; */
+    /* min-width: 50%;
+    min-height: 50%; */
+    
+    align-items: center;
+    justify-content: center;
+
+    background-color: #282828;
+    color: #33FF33;
+    font-size: 20px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
+    border-style: dashed;
+    padding: 50px;
+    margin: 50px;
+
+}
+
+.wpm__test__prompt__input {
+    background-color: transparent;
+    color: #33FF33;
+    font-weight: 900;
+    border: 0;
+    outline: none;
+    font-size: 20px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+}
+
+.wpm__test__prompt__instructions {
+    background-color: transparent;
+    color: #FFFF33;
+    font-weight: 900;
+    border: 0;
+    outline: none;
+    font-size: 20px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+    justify-content: center;
+    align-items: flex-end;
+}
