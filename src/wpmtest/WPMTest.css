@@ -20,11 +20,13 @@
     /* min-width: 50%;
     min-height: 50%; */
     
+    flex-flow: row wrap;
+
     align-items: center;
     justify-content: center;
 
     background-color: #282828;
-    color: #33FF33;
+    color: #D3D3D3;
     font-size: 20px;
     line-height: 1.42;
     font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
@@ -32,10 +34,42 @@
     text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 
     border-style: dashed;
+    border-color: #33FF33;
     outline: none;
     padding: 50px;
     margin: 50px;
 
+}
+
+.wpm__test__prompt__row__span {
+    display: flex;
+
+    flex-flow: row nowrap;
+}
+
+.wpm__test__prompt__character__default {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #D3D3D3;
+}
+
+.wpm__test__prompt__character__selected {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.wpm__test__prompt__character__correct {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #33FF33;
+}
+
+.wpm__test__prompt__character__incorrect {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #FF0000;
 }
 
 .wpm__test__prompt__instructions {
