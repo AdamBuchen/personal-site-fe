@@ -110,11 +110,6 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
     }, [currentRoundPrompt]);
 
-    //For testing
-    //setCurrentRoundPrompt(testingPromptString);
-
-
-
     /**
      * When user presses enter, we execute the command
      */
@@ -245,68 +240,6 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                     );
                 })
             }
-
-
-
-
-
-                {/* {currentRoundCharByRowByIdx.map((charArray, rowIdx) => {
-
-                        const isLastItem = rowIdx === currentRoundCharByRowByIdx.length - 1;
-                        const lastSpace = isLastItem ? '' : '\u00a0'; //How to do a nonbreaking space
-
-                        return (
-                        
-                        charArray.map((char, charIdx) => {
-                            return (
-                                <span className={getCssClassForCharByLineByCharIdx(rowIdx, charIdx)} key={rowIdx + "_" + charIdx}>{char}</span>
-                            );
-                        })
-
-                    );
-                
-                })} */}
-
-
-                {/* {currentRoundCharByRowByIdx.map((charArray, rowIdx) => 
-
-                })} */}
-
-
-                {/* {promptLines.map((line, index) => {
-                        const isLastItem = index === promptLines.length - 1;
-                        const lastSpace = isLastItem ? '' : '\u00a0'; //How to do a nonbreaking space
-
-                        return (
-                            <span className={getCssClassForCharByLineByCharIdx(currentRowIdx, currentRowCharIdx)} key={index}>{line}{lastSpace}</span>
-                        );
-                })} */}
-
-                {/* {promptLines.map((line, lineIdx) => (
-                  <span>{line}</span>
-                ))} */}
-
-                {/* {promptLines.map((line, lineIdx) => (
-                    {line.split(' ').map((word, wordIdx) => (
-
-                    ))}
-                ))} */}
-
-                {/* {words.map((word, wordIdx) => (
-                        // Render each word in a span, and apply styles or event handlers as needed
-                        <span key={wordIdx}>
-                        {word.split('').map((char, idx) => (
-                            <span key={idx} className={getCssClassForCharByIdx(idx)}>
-                            {char}
-                            </span>
-                        ))}
-                        </span>
-                    ))} */}
-                
-                    {/* {charByIdx.map((char, idx) => (
-    <span key={idx} className={getCssClassForCharByIdx(idx)}>{char}</span>
-                    ))} */}
-
 
             </div>
         </div>
