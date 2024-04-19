@@ -1,5 +1,6 @@
 import { useEffect, useCallback, MutableRefObject, useRef, useState, useMemo } from "react";
 import './WPMTest.css';
+import { GetShuffledPromptList, RoundResult } from "./types";
 
 enum RoundStatus {
     Unstarted = 1,
@@ -56,12 +57,17 @@ export type WPMTestProps = {
 
 export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
-    const testingPromptString = `Foxes vulpis, swift and agile, dart through the underbrush with vibrant energy. In the moonlit forests, their eyes gleam with a clever spark, scanning the terrain for any sign of movement. The rustle of leaves underfoot betrays the presence of nocturnal creatures, while overhead, the canopy whispers secrets of the ancient woodland. Red coats blend into the autumnal hues, the foxes' movements harmonious with the falling leaves.`;
-    let promptString = testingPromptString;
+    const promptList = GetShuffledPromptList();
+    let promptString = promptList[0];
+
+    //Overall results
+    const [byRoundResults, setByRoundResults] = useState<RoundResult[]>([]);
 
     // Info about the current Round
+    const [currentRoundIdx, setCurrentRoundIdx] = useState(0); //0-indexed round numbers
     const [currentRoundStatus, setCurrentRoundStatus] = useState(RoundStatus.Unstarted);
     const [currentRoundPrompt, setCurrentRoundPrompt] = useState(promptString);
+    const [currentRoundPromptIdx, setCurrentRoundPromptIdx] = useState(0);
 
     // State for measurements
     const [numSuccessfulEntries, setNumSuccessfulEntries] = useState(0);
@@ -91,7 +97,8 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
         const wordsTyped = numSuccessfulEntries / 5;
         const minutes = duration / 60;
-        setRoundWPM(wordsTyped / minutes);
+        let roundWPM = wordsTyped / minutes;
+        setRoundWPM(roundWPM);
 
         let percentage = 0;
         let totalKeypresses = numFailedEntries + numSuccessfulEntries;
@@ -99,10 +106,37 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             percentage = (numSuccessfulEntries / totalKeypresses) * 100;
         }
         setRoundAccuracyAsPercentage(percentage);
+
+        let roundResult :RoundResult = {
+            duration: duration,
+            numSuccessfulEntries: numSuccessfulEntries,
+            numFailedEntries: numFailedEntries,
+            wpm: roundWPM,
+            prompt: currentRoundPrompt
+        };
+
+        setByRoundResults([...byRoundResults, roundResult]);
     };
 
-    function truncateFloat(num :number) {
-        return Math.floor(num * 100) / 100;
+    function roundFloat(num :number) {
+        return parseFloat(num.toFixed(2));
+    }
+
+    function startNewRound() {
+        //Update the round number, get the next prompt and set it.
+        let newPromptIdx = currentRoundPromptIdx;
+        if (newPromptIdx >= promptList.length) {
+            newPromptIdx = 0;
+        }
+
+        let newRoundIdx = currentRoundIdx + 1;
+        setRoundStartTime(0);
+        setRoundEndTime(0);
+        setNumFailedEntries(0);
+        setNumSuccessfulEntries(0);
+        setCurrentRoundIdx(newRoundIdx);
+        setCurrentRoundPromptIdx(newPromptIdx);
+        setCurrentRoundPrompt(promptList[newPromptIdx]);
     }
 
     let promptLines = getLinesFromPrompt(promptString);
@@ -193,6 +227,16 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             || e.key == "Shift" || e.key == 'Tab' || e.key == 'ArrowUp'
             || e.key == 'ArrowDown' || e.key == 'Enter') {
                 return;
+        }
+
+        if (currentRoundStatus == RoundStatus.Completed) { //Handling "Play Again? Y/N"
+            if (e.key == 'Y' || e.key == 'y') {
+                startNewRound();
+            } else if (e.key == 'N' || e.key == 'n') {
+                exitCommandCallback();
+            } else {
+                return;
+            }
         }
 
         if (currentStatusByRowByCharIdx.length == 0) {
@@ -315,11 +359,14 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             }
             {currentRoundStatus == RoundStatus.Completed && 
                 roundWPM > 0 &&
-                <span className="wpm__test__prompt__instructions">
-                    Duration: {truncateFloat(roundDuration)} seconds<br />
-                    WPM: {truncateFloat(roundWPM)}<br />
-                    Accuracy: {truncateFloat(roundAccuracyAsPercentage)}%<br />
-                </span>
+                <>
+                    <span className="wpm__test__prompt__instructions">
+                        Duration: {roundFloat(roundDuration)} seconds<br />
+                        WPM: {roundFloat(roundWPM)}<br />
+                        Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
+                        <span className="wpm__test__prompt__cta">Play Again? Y/N</span>
+                    </span>
+                </>
             }
         </div>
  

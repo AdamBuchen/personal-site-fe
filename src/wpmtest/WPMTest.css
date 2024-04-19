@@ -85,6 +85,20 @@
     line-height: 1.42;
     font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
     monospace;
-    justify-content: center;
-    align-items: flex-end;
+    /* justify-content: center; */
+    /* align-items: flex-end; */
+}
+
+.wpm__test__prompt__cta {
+    /* background-color: transparent; */
+    color: #33FF33;
+    /* font-weight: 900;
+    border: 0;
+    outline: none;
+    font-size: 20px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+    /* justify-content: center; */
+    /* align-items: flex-end; */
 }
