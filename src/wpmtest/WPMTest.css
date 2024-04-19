@@ -16,10 +16,7 @@
 
 .wpm__test__prompt__div {
     display: flex;
-     /* flex-grow: 1; */
-    /* min-width: 50%;
-    min-height: 50%; */
-    
+
     flex-flow: row wrap;
 
     align-items: center;
@@ -43,7 +40,6 @@
 
 .wpm__test__prompt__row__span {
     display: flex;
-
     flex-flow: row nowrap;
 }
 

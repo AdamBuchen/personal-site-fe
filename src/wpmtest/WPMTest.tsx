@@ -59,19 +59,51 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
     const testingPromptString = `Foxes vulpis, swift and agile, dart through the underbrush with vibrant energy. In the moonlit forests, their eyes gleam with a clever spark, scanning the terrain for any sign of movement. The rustle of leaves underfoot betrays the presence of nocturnal creatures, while overhead, the canopy whispers secrets of the ancient woodland. Red coats blend into the autumnal hues, the foxes' movements harmonious with the falling leaves.`;
     let promptString = testingPromptString;
 
-    //State
+    // Info about the current Round
     const [currentRoundStatus, setCurrentRoundStatus] = useState(RoundStatus.Unstarted);
-
     const [currentRoundPrompt, setCurrentRoundPrompt] = useState(promptString);
+
+    // State for measurements
     const [numSuccessfulEntries, setNumSuccessfulEntries] = useState(0);
     const [numFailedEntries, setNumFailedEntries] = useState(0);
+    const [roundStartTime, setRoundStartTime] = useState(0);
+    const [roundEndTime, setRoundEndTime] = useState(0);
+    const [roundDuration, setRoundDuration] = useState(0);
+    const [roundWPM, setRoundWPM] = useState(0);
+    const [roundAccuracyAsPercentage, setRoundAccuracyAsPercentage] = useState(0);
 
-    //New
+    // Prompt character location stuff
     const [currentRowIdx, setCurrentRowIdx] = useState(0);
     const [currentRowCharIdx, setCurrentRowCharIdx] = useState(0);
     const [currentStatusByRowByCharIdx, setCurrentStatusByRowByCharIdx] = useState<CharacterStatus[][]>([]);
     const [currentRoundCharByRowByIdx, setCurrentRoundCharByRowByIdx] = useState<string[][]>([]);
 
+    const startTimer = () => {
+        setRoundStartTime(new Date().getTime());
+        setRoundEndTime(0);
+    };
+
+    const stopTimer = () => {
+        const endTime = new Date().getTime();
+        setRoundEndTime(endTime);
+        const duration = (endTime - roundStartTime) / 1000;
+        setRoundDuration(duration);
+
+        const wordsTyped = numSuccessfulEntries / 5;
+        const minutes = duration / 60;
+        setRoundWPM(wordsTyped / minutes);
+
+        let percentage = 0;
+        let totalKeypresses = numFailedEntries + numSuccessfulEntries;
+        if (totalKeypresses > 0) {
+            percentage = (numSuccessfulEntries / totalKeypresses) * 100;
+        }
+        setRoundAccuracyAsPercentage(percentage);
+    };
+
+    function truncateFloat(num :number) {
+        return Math.floor(num * 100) / 100;
+    }
 
     let promptLines = getLinesFromPrompt(promptString);
     let charStatusByRowByIdx :CharacterStatus[][] = [];
@@ -114,7 +146,9 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         wpmTestKeyboardHandler,
         [exitCommandCallback, currentStatusByRowByCharIdx, currentRoundStatus,
             numSuccessfulEntries, numFailedEntries, currentRowCharIdx,
-            currentRowIdx, currentRoundCharByRowByIdx
+            currentRowIdx, currentRoundCharByRowByIdx, setCurrentRoundStatus,
+            setNumSuccessfulEntries, setNumFailedEntries, setCurrentRowIdx,
+            setCurrentRowCharIdx, setCurrentStatusByRowByCharIdx
         ]
         );
 
@@ -149,6 +183,11 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
     function wpmTestKeyboardHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         
+        // Bail out
+        if (e.ctrlKey && e.key == 'c') {
+            exitCommandCallback();
+        }
+
         if (e.key.length !== 1 || e.key == "Alt" || e.key == "Control" 
             || e.key == "CapsLock" || e.key == "Fn" || e.key == "Meta" 
             || e.key == "Shift" || e.key == 'Tab' || e.key == 'ArrowUp'
@@ -162,6 +201,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
         if (currentRoundStatus == RoundStatus.Unstarted) {
             setCurrentRoundStatus(RoundStatus.InProgress);
+            startTimer();
         }
 
         let isFirstAttempt = (currentStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] == CharacterStatus.Unplayed
@@ -180,27 +220,26 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         if (e.key == correctKeyToPress) {
             if (isFirstAttempt) {
                 updatedStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] = CharacterStatus.Passed;
-                setNumSuccessfulEntries(numSuccessfulEntries + 1);
                 statusRequiresChanging = true;
             } else { //They failed before and are getting it right this time.
                 updatedStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] = CharacterStatus.Failed;
             }
+            setNumSuccessfulEntries(numSuccessfulEntries + 1);
             idxRequiresChanging = true;
         } else { //Incorrect key press
             if (isFirstAttempt) {
                 updatedStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] = CharacterStatus.TryAgain;
-                setNumFailedEntries(numFailedEntries + 1);
                 statusRequiresChanging = true;
             }
+            setNumFailedEntries(numFailedEntries + 1);
         }
-
-
 
         if (idxRequiresChanging) {
             let newIdx = currentRowCharIdx + 1;
             if (newIdx >= currentStatusByRowByCharIdx[currentRowIdx].length) { //The last char of the line was just entered
                 let newRowIdx = currentRowIdx + 1;
                 if (newRowIdx >= currentStatusByRowByCharIdx.length) { //We finished the last row
+                    stopTimer();
                     setCurrentRoundStatus(RoundStatus.Completed);
                 } else { //Progress to the next row
                     setCurrentRowIdx(newRowIdx);
@@ -231,6 +270,16 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                     Begin typing the text below when ready
                 </span>
             }
+            {currentRoundStatus == RoundStatus.InProgress && 
+                <span className="wpm__test__prompt__instructions">
+                    Round in progress
+                </span>
+            }
+            {currentRoundStatus == RoundStatus.Completed && 
+                <span className="wpm__test__prompt__instructions">
+                    Round complete
+                </span>
+            }
             <div className="wpm__test__prompt__div" tabIndex={0}
                  ref={promptDisplayDivRef}
                  id='prompt_input_div'
@@ -238,7 +287,6 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                  onChange={handleInputChange}
                  style={{ display: 'flex', flexWrap: 'wrap', wordWrap: 'break-word' }}
             >
-
 
             {
                 currentRoundCharByRowByIdx.map((charArray, rowIdx) => {
@@ -260,6 +308,19 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             }
 
             </div>
+            {currentRoundStatus != RoundStatus.Completed && 
+                <span className="wpm__test__prompt__instructions">
+                    Ctrl-C to quit
+                </span>
+            }
+            {currentRoundStatus == RoundStatus.Completed && 
+                roundWPM > 0 &&
+                <span className="wpm__test__prompt__instructions">
+                    Duration: {truncateFloat(roundDuration)} seconds<br />
+                    WPM: {truncateFloat(roundWPM)}<br />
+                    Accuracy: {truncateFloat(roundAccuracyAsPercentage)}%<br />
+                </span>
+            }
         </div>
  
     </>);
