@@ -60,6 +60,13 @@
     text-decoration: underline;
 }
 
+.wpm__test__prompt__character__tryagain {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #FFFF33;
+    text-decoration: underline;
+}
+
 .wpm__test__prompt__character__correct {
     white-space: pre;
     /* word-break: break-all; */

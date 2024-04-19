@@ -1,4 +1,4 @@
-import { useEffect, useCallback, MutableRefObject, useRef, useState } from "react";
+import { useEffect, useCallback, MutableRefObject, useRef, useState, useMemo } from "react";
 import './WPMTest.css';
 
 enum RoundStatus {
@@ -11,7 +11,8 @@ enum CharacterStatus {
     Unplayed = 1,
     Selected,
     Passed,
-    Failed
+    Failed,
+    TryAgain
   }
 
 function getLinesFromPrompt(prompt :string) :string[] {
@@ -57,7 +58,6 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
     const testingPromptString = `Foxes vulpis, swift and agile, dart through the underbrush with vibrant energy. In the moonlit forests, their eyes gleam with a clever spark, scanning the terrain for any sign of movement. The rustle of leaves underfoot betrays the presence of nocturnal creatures, while overhead, the canopy whispers secrets of the ancient woodland. Red coats blend into the autumnal hues, the foxes' movements harmonious with the falling leaves.`;
     let promptString = testingPromptString;
-    //let charByIdx = Array.from(promptString);
 
     //State
     const [currentRoundStatus, setCurrentRoundStatus] = useState(RoundStatus.Unstarted);
@@ -72,12 +72,9 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
     const [currentStatusByRowByCharIdx, setCurrentStatusByRowByCharIdx] = useState<CharacterStatus[][]>([]);
     const [currentRoundCharByRowByIdx, setCurrentRoundCharByRowByIdx] = useState<string[][]>([]);
 
-    //Old
-    //const [currentCharIdx, setCurrentCharIdx] = useState(0);
-
-    //
 
     let promptLines = getLinesFromPrompt(promptString);
+    let charStatusByRowByIdx :CharacterStatus[][] = [];
 
     const promptDisplayDivRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -115,7 +112,10 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
      */
     const handleInputKeyDown = useCallback(
         wpmTestKeyboardHandler,
-        [exitCommandCallback]
+        [exitCommandCallback, currentStatusByRowByCharIdx, currentRoundStatus,
+            numSuccessfulEntries, numFailedEntries, currentRowCharIdx,
+            currentRowIdx, currentRoundCharByRowByIdx
+        ]
         );
 
     /**
@@ -128,7 +128,8 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         []
         );
 
-    const getCssClassForCharByLineByCharIdx = (lineIdx: number, charIdx: number) :string => {
+    const getCssClassForCharByLineByCharIdx = useMemo(() => {
+        return (lineIdx: number, charIdx: number) :string => {
         let charStatus = currentStatusByRowByCharIdx[lineIdx][charIdx];
         switch (charStatus) {
             case CharacterStatus.Selected:
@@ -136,19 +137,18 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             case CharacterStatus.Passed:
                 return "wpm__test__prompt__character__correct";
             case CharacterStatus.Failed:
-                return "wpm__test__prompt__character__selected";
+                return "wpm__test__prompt__character__incorrect";
+            case CharacterStatus.TryAgain:
+                return "wpm__test__prompt__character__tryagain";
             default:
                 return "wpm__test__prompt__character__default";
         }
-    };
+    }
+    }, [currentStatusByRowByCharIdx]);
 
 
     function wpmTestKeyboardHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         
-        if (currentRoundStatus == RoundStatus.Unstarted) {
-            setCurrentRoundStatus(RoundStatus.InProgress);
-        }
-
         if (e.key.length !== 1 || e.key == "Alt" || e.key == "Control" 
             || e.key == "CapsLock" || e.key == "Fn" || e.key == "Meta" 
             || e.key == "Shift" || e.key == 'Tab' || e.key == 'ArrowUp'
@@ -156,6 +156,13 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                 return;
         }
 
+        if (currentStatusByRowByCharIdx.length == 0) {
+            return;
+        }
+
+        if (currentRoundStatus == RoundStatus.Unstarted) {
+            setCurrentRoundStatus(RoundStatus.InProgress);
+        }
 
         let isFirstAttempt = (currentStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] == CharacterStatus.Unplayed
             || currentStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] == CharacterStatus.Selected)
@@ -175,34 +182,45 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                 updatedStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] = CharacterStatus.Passed;
                 setNumSuccessfulEntries(numSuccessfulEntries + 1);
                 statusRequiresChanging = true;
+            } else { //They failed before and are getting it right this time.
+                updatedStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] = CharacterStatus.Failed;
             }
             idxRequiresChanging = true;
-        } else {
+        } else { //Incorrect key press
             if (isFirstAttempt) {
-                updatedStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] = CharacterStatus.Failed;
+                updatedStatusByRowByCharIdx[currentRowIdx][currentRowCharIdx] = CharacterStatus.TryAgain;
                 setNumFailedEntries(numFailedEntries + 1);
                 statusRequiresChanging = true;
             }
         }
 
-        if (statusRequiresChanging) {
-            setCurrentStatusByRowByCharIdx(updatedStatusByRowByCharIdx);
-        }
+
 
         if (idxRequiresChanging) {
             let newIdx = currentRowCharIdx + 1;
             if (newIdx >= currentStatusByRowByCharIdx[currentRowIdx].length) { //The last char of the line was just entered
-                let newLineIdx = currentRowIdx + 1;
-                if (newLineIdx >= currentStatusByRowByCharIdx.length) { //We finished the lsat row
+                let newRowIdx = currentRowIdx + 1;
+                if (newRowIdx >= currentStatusByRowByCharIdx.length) { //We finished the last row
                     setCurrentRoundStatus(RoundStatus.Completed);
                 } else { //Progress to the next row
-                    setCurrentRowIdx(newLineIdx);
+                    setCurrentRowIdx(newRowIdx);
                     setCurrentRowCharIdx(0);
+
+                    //update the next char to show as ready
+                    updatedStatusByRowByCharIdx[newRowIdx][0] = CharacterStatus.Selected;
+                    statusRequiresChanging = true;
                 }
             } else {
                 setCurrentRowCharIdx(newIdx); //Progress to the next char in the line
+                updatedStatusByRowByCharIdx[currentRowIdx][newIdx] = CharacterStatus.Selected;
+                statusRequiresChanging = true;                
             }
         }
+    
+        if (statusRequiresChanging) {
+            setCurrentStatusByRowByCharIdx(updatedStatusByRowByCharIdx);
+        }
+    
     }
 
     return (<>
