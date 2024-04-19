@@ -12,10 +12,8 @@ let promptListArray :string[] = ([
     `"Chrono Trigger" is celebrated as one of the best RPGs ever due to its innovative gameplay, compelling story, and groundbreaking mechanics. Its narrative, featuring a time-traveling adventure with multiple endings, offers a deep and engaging experience that resonates with players. The game introduces a unique combat system that blends turn-based actions with real-time elements, enhancing strategic depth. Additionally, its memorable characters, and captivating soundtrack contribute to its lasting appeal and significant impact on the RPG genre.`
 ]);
 
-shuffledPromptList(promptListArray);
-
 export function GetShuffledPromptList() :string[] {
-    //shuffledPromptList(promptListArray);
+    shuffledPromptList(promptListArray);
     return promptListArray;
 }
 
