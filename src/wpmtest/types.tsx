@@ -13,16 +13,27 @@ let promptListArray :string[] = ([
 ]);
 
 export function GetShuffledPromptList() :string[] {
-    shuffledPromptList(promptListArray);
-    return promptListArray;
+    let shuffled = Array.from(promptListArray);
+    return(shuffle(shuffled));
 }
 
-function shuffledPromptList(array :string[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
-        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+export function shuffle(array: string[]): string[] {
+    let currentIndex = array.length,  randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
     }
-}
+  
+    return array;
+};
 
 export type RoundResult = {
     duration: number,

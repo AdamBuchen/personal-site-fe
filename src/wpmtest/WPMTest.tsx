@@ -57,16 +57,19 @@ export type WPMTestProps = {
 
 export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
-    const promptList = GetShuffledPromptList();
-    let promptString = promptList[0];
+    // const shuffledPromptList = GetShuffledPromptList();
+    // let promptString = shuffledPromptList[0];
+
+    const shuffledPromptList = GetShuffledPromptList();
 
     //Overall results
+    const [promptList, setPromptList] = useState<string[]>(shuffledPromptList);
     const [byRoundResults, setByRoundResults] = useState<RoundResult[]>([]);
 
     // Info about the current Round
     const [currentRoundIdx, setCurrentRoundIdx] = useState(0); //0-indexed round numbers
     const [currentRoundStatus, setCurrentRoundStatus] = useState(RoundStatus.Unstarted);
-    const [currentRoundPrompt, setCurrentRoundPrompt] = useState(promptString);
+    const [currentRoundPrompt, setCurrentRoundPrompt] = useState(shuffledPromptList[0]);
     const [currentRoundPromptIdx, setCurrentRoundPromptIdx] = useState(0);
 
     // State for measurements
@@ -124,7 +127,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
     function startNewRound() {
         //Update the round number, get the next prompt and set it.
-        let newPromptIdx = currentRoundPromptIdx;
+        let newPromptIdx = currentRoundPromptIdx + 1;
         if (newPromptIdx >= promptList.length) {
             newPromptIdx = 0;
         }
@@ -137,15 +140,17 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         setCurrentRoundIdx(newRoundIdx);
         setCurrentRoundPromptIdx(newPromptIdx);
         setCurrentRoundPrompt(promptList[newPromptIdx]);
+        console.log(promptList);
     }
-
-    let promptLines = getLinesFromPrompt(promptString);
-    let charStatusByRowByIdx :CharacterStatus[][] = [];
 
     const promptDisplayDivRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         promptDisplayDivRef.current?.focus();
     });
+
+    // useEffect(() => {
+    //     alert('re-rendered');
+    // }, []);
 
     // Whenever the prompt changes, we should reset everything.
     useEffect(() => {
@@ -153,7 +158,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         setCurrentRowIdx(0);
         setCurrentRowCharIdx(0);
 
-        promptLines = getLinesFromPrompt(currentRoundPrompt);
+        let promptLines = getLinesFromPrompt(currentRoundPrompt);
         let charStatusByRowByIdx :CharacterStatus[][] = [];
         let charByRowByIdx :string[][] = [];
 
@@ -182,7 +187,11 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             numSuccessfulEntries, numFailedEntries, currentRowCharIdx,
             currentRowIdx, currentRoundCharByRowByIdx, setCurrentRoundStatus,
             setNumSuccessfulEntries, setNumFailedEntries, setCurrentRowIdx,
-            setCurrentRowCharIdx, setCurrentStatusByRowByCharIdx
+            setCurrentRowCharIdx, setCurrentStatusByRowByCharIdx, promptList,
+            currentRoundPromptIdx, currentRoundIdx, setRoundStartTime, 
+            setRoundEndTime, setCurrentRoundIdx, setCurrentRoundPromptIdx,
+            setCurrentRoundPrompt, setRoundDuration, setRoundWPM, 
+            setRoundAccuracyAsPercentage, setByRoundResults
         ]
         );
 
@@ -217,9 +226,16 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
     function wpmTestKeyboardHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         
+        e.preventDefault();
+
         // Bail out
         if (e.ctrlKey && e.key == 'c') {
             exitCommandCallback();
+        }
+
+        if (e.ctrlKey && e.key == 'ArrowRight') {
+            startNewRound();
+            return;
         }
 
         if (e.key.length !== 1 || e.key == "Alt" || e.key == "Control" 

@@ -3,7 +3,7 @@
 import styles from "./page.module.css";
 import Terminal from "../terminal";
 import {useTerminal} from "../terminal/hooks";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {use, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
 
 import {MobileHome} from "../mobile/MobileHome";
@@ -55,9 +55,9 @@ export default function Home() {
 
   }, [setWindowWidth]);
 
-  function quitToTerminal() {
+  const quitToTerminal = useCallback(() => {
     setRunningTerminalApp(TerminalApps.Terminal);
-  }
+  }, [setRunningTerminalApp]);
 
   //Turn off the radio when we switch apps
   useEffect(() => {
