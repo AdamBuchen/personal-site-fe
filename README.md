@@ -22,6 +22,7 @@ This is the front-end code for Adam Buchen's personal website. It was built with
   * play - Resumes current playback
 * reset - Resets the terminal, including all state. Browser reloads window.
 * rr - Try it, if you dare
+* typing_game - A typing tutor game. Practice your typing skills and get feedback.
 
 > **_NOTE:_** Using arrow-up and arrow-down to cycle through history has been implemented, as has tab-completion.
 
