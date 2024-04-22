@@ -251,7 +251,8 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             setRoundEndTime, setCurrentRoundIdx, setCurrentRoundPromptIdx,
             setCurrentRoundPrompt, setRoundDuration, setRoundWPM, 
             setRoundAccuracyAsPercentage, setByRoundResults, inResultsScreen,
-            setInResultsScreen
+            setInResultsScreen, byRoundResults, restartRound, startNewRound,
+            stopTimer
         ]
         );
 
@@ -456,7 +457,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                                             accuracy = roundResult.numSuccessfulEntries / totalNumKeypresses;
                                         }
                                         return (
-                                            <tr>
+                                            <tr key={"row_" + roundIdx}>
                                                 <td>
                                                     {roundIdx + 1}
                                                 </td>
