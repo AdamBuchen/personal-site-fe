@@ -1,0 +1,159 @@
+.wpm__test__container {
+
+    display: flex;
+    flex-flow: column wrap;
+
+    position: absolute;
+
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    
+    align-items: center;
+    justify-content: center;
+}
+
+.wpm__test__prompt__div {
+    display: flex;
+
+    flex-flow: row wrap;
+
+    align-items: center;
+    justify-content: center;
+
+    background-color: #282828;
+    color: #D3D3D3;
+    font-size: 20px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+    text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+
+    border-style: dashed;
+    border-color: #33FF33;
+    outline: none;
+    padding: 50px;
+    margin: 50px;
+
+}
+
+.wpm__test__prompt__row__span {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.wpm__test__prompt__character__default {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #D3D3D3;
+}
+
+.wpm__test__prompt__character__selected {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.wpm__test__prompt__character__tryagain {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #FFFF33;
+    text-decoration: underline;
+}
+
+.wpm__test__prompt__character__correct {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #33FF33;
+}
+
+.wpm__test__prompt__character__incorrect {
+    white-space: pre;
+    /* word-break: break-all; */
+    color: #FF0000;
+}
+
+.wpm__test__prompt__instructions {
+    background-color: transparent;
+    color: #FFFF33;
+    font-weight: 900;
+    border: 0;
+    outline: none;
+    font-size: 20px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+    /* justify-content: center; */
+    /* align-items: flex-end; */
+}
+
+.wpm__test__prompt__cta {
+    /* background-color: transparent; */
+    color: #33FF33;
+    /* font-weight: 900;
+    border: 0;
+    outline: none;
+    font-size: 20px;
+    line-height: 1.42;
+    font-family: 'IBM Plex Mono', Consolas, Menlo, Monaco, 'Courier New', Courier,
+    monospace;
+    /* justify-content: center; */
+    /* align-items: flex-end; */
+}
+
+.wpm__results__container {
+    
+    display: flex;
+    flex-flow: column nowrap;
+
+    position: absolute;
+
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.wpm__results__header {
+    padding: 50px;
+    font-weight: 900;
+    text-decoration: underline;
+}
+
+.wpm__results__instructions {
+    padding: 50px;
+    font-weight: 900;
+    color: #FFFF33;
+    outline: none;
+}
+
+.wpm__results__div {
+    padding: 30px;
+}
+
+.wpm__results__table {
+    border: 1px dashed;
+    width: 900px;
+    justify-content: center;
+    border-collapse: collapse;
+    
+}
+
+tr {
+    width: 100%;
+}
+
+th, td {
+    padding: 15px;
+    border: 1px dashed;
+    text-align: center;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

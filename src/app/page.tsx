@@ -3,14 +3,14 @@
 import styles from "./page.module.css";
 import Terminal from "../terminal";
 import {useTerminal} from "../terminal/hooks";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {use, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { jsonResume, musicTracks, radioStations, topLevelValidCommands, validRadioCommands } from "@/terminal/types";
 
 import {MobileHome} from "../mobile/MobileHome";
 import {AudioPlayer} from "../audioplayer/AudioPlayer";
 import {Cat} from "../cat/Cat";
 import {Bio} from "../bio/Bio";
-import { WPMTestProps, WPMTest } from "../wpmtest/WPMTest";
+import { WPMTest } from "../wpmtest/WPMTest";
 
 export default function Home() {
   const {
@@ -55,9 +55,9 @@ export default function Home() {
 
   }, [setWindowWidth]);
 
-  function quitToTerminal() {
+  const quitToTerminal = useCallback(() => {
     setRunningTerminalApp(TerminalApps.Terminal);
-  }
+  }, [setRunningTerminalApp]);
 
   //Turn off the radio when we switch apps
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function Home() {
     pushToHistory(<>
         <pre>{asciiArt}</pre>
         <div className="terminal__date">{isoStringWithoutMillis}<br /></div>
-        <div>Valid commands: { topLevelValidCommands.join(', ') }</div>
+        <div>Valid commands:<br />{ topLevelValidCommands.join(', ') }</div>
         <br />
       </>
     );
@@ -172,7 +172,7 @@ export default function Home() {
         <div>
           <span style={{ color: '#F9EF00' }}>
             <strong>Welcome to AdamBuchen.com</strong><br />
-            <div>Valid commands: { topLevelValidCommands.join(', ') }</div>
+            <div>Valid commands:<br/>{ topLevelValidCommands.join(', ') }</div>
           </span>
         </div>
       </>);
@@ -190,7 +190,7 @@ export default function Home() {
     'bio': () => {
       setRunningTerminalApp(TerminalApps.Bio);
     },
-    'wpm_test': () => {
+    'typing_game': () => {
       setRunningTerminalApp(TerminalApps.WPMTest);
     },
     'clear': async () => {
@@ -460,7 +460,6 @@ export default function Home() {
 
         {runningTerminalApp == TerminalApps.WPMTest &&
           <WPMTest
-            inputRef={inputRef}
             exitCommandCallback={quitToTerminal}
           />
         }
