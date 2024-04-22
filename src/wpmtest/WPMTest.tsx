@@ -140,17 +140,12 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         setCurrentRoundIdx(newRoundIdx);
         setCurrentRoundPromptIdx(newPromptIdx);
         setCurrentRoundPrompt(promptList[newPromptIdx]);
-        console.log(promptList);
     }
 
     const promptDisplayDivRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         promptDisplayDivRef.current?.focus();
     });
-
-    // useEffect(() => {
-    //     alert('re-rendered');
-    // }, []);
 
     // Whenever the prompt changes, we should reset everything.
     useEffect(() => {
@@ -380,7 +375,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                         Duration: {roundFloat(roundDuration)} seconds<br />
                         WPM: {roundFloat(roundWPM)}<br />
                         Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
-                        <span className="wpm__test__prompt__cta">Play Again? Y/N</span>
+                        <span className="wpm__test__prompt__cta">Play another round? Y/N</span>
                     </span>
                 </>
             }
