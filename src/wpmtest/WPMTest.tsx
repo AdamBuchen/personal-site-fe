@@ -550,9 +550,9 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                 </div>
                 {currentRoundStatus != RoundStatus.Completed && 
                     <span className="wpm__test__prompt__instructions">
-                        Ctrl-R to restart level<br />
-                        Ctrl + Right Arrow to skip to next level<br />
-                        Ctrl-C to quit
+                        [Ctrl] + [R] to restart level<br />
+                        [Ctrl] + [→] to skip to next level<br />
+                        [Ctrl] + [C] to quit
                     </span>
                 }
                 {currentRoundStatus == RoundStatus.Completed && 
@@ -564,7 +564,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                             Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
                             <span className="wpm__test__prompt__cta">
                                 Play a new level? Y/N<br />
-                                Ctrl-R to replay level
+                                [Ctrl] + [R] to replay level
                             </span>
                         </span>
                     </>
