@@ -102,3 +102,58 @@
     /* justify-content: center; */
     /* align-items: flex-end; */
 }
+
+.wpm__results__container {
+    
+    display: flex;
+    flex-flow: column nowrap;
+
+    position: absolute;
+
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.wpm__results__header {
+    padding: 50px;
+    font-weight: 900;
+    text-decoration: underline;
+}
+
+.wpm__results__instructions {
+    padding: 50px;
+    font-weight: 900;
+    color: #FFFF33;
+    outline: none;
+}
+
+.wpm__results__div {
+    padding: 30px;
+}
+
+.wpm__results__table {
+    border: 1px dashed;
+    width: 900px;
+    justify-content: center;
+    border-collapse: collapse;
+    
+}
+
+tr {
+    width: 100%;
+}
+
+th, td {
+    padding: 15px;
+    border: 1px dashed;
+    text-align: center;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

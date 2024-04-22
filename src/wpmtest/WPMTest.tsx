@@ -65,6 +65,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
     //Overall results
     const [promptList, setPromptList] = useState<string[]>(shuffledPromptList);
     const [byRoundResults, setByRoundResults] = useState<RoundResult[]>([]);
+    const [inResultsScreen, setInResultsScreen] = useState(false);
 
     // Info about the current Round
     const [currentRoundIdx, setCurrentRoundIdx] = useState(0); //0-indexed round numbers
@@ -198,6 +199,18 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         promptDisplayDivRef.current?.focus();
     });
 
+    const resultsFooterRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (resultsFooterRef.current) {
+            setTimeout(() => {
+                if (resultsFooterRef && resultsFooterRef.current) {
+                    resultsFooterRef.current.scrollIntoView({ block: 'end'});
+                    resultsFooterRef.current.focus();
+                }
+            }, 10);
+        }
+    });
+
     // Whenever the prompt changes, we should reset everything.
     useEffect(() => {
         setCurrentRoundStatus(RoundStatus.Unstarted);
@@ -237,26 +250,24 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             currentRoundPromptIdx, currentRoundIdx, setRoundStartTime, 
             setRoundEndTime, setCurrentRoundIdx, setCurrentRoundPromptIdx,
             setCurrentRoundPrompt, setRoundDuration, setRoundWPM, 
-            setRoundAccuracyAsPercentage, setByRoundResults
+            setRoundAccuracyAsPercentage, setByRoundResults, inResultsScreen,
+            setInResultsScreen
         ]
         );
 
-    /**
-     * When user types something, we update the input value
-     */
-    const handleInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLDivElement>) => {
-            //alert(e.target.value);
-        },
-        []
-        );
 
     /**
      * When users click outside of the playable area, refocus.
      */
-    const handleBlur = useCallback(
+    const handlePromptDisplayBlur = useCallback(
         () => {
             promptDisplayDivRef.current?.focus();
+        }, []
+    );
+
+    const handleResultsFooterBlur = useCallback(
+        () => {
+            resultsFooterRef.current?.focus();
         }, []
     );
 
@@ -285,7 +296,12 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
 
         // Bail out
         if (e.ctrlKey && e.key.toLowerCase() == 'c') {
-            exitCommandCallback();
+            if (byRoundResults.length == 0) {
+                exitCommandCallback();
+                return;
+            }
+            setInResultsScreen(true);
+            return;
         }
 
         if (e.ctrlKey && e.key == 'ArrowRight') {
@@ -305,11 +321,16 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                 return;
         }
 
+        if (inResultsScreen) {
+            exitCommandCallback();
+            return;
+        }
+
         if (currentRoundStatus == RoundStatus.Completed) { //Handling "Play Again? Y/N"
             if (e.key == 'Y' || e.key == 'y') {
                 startNewRound();
             } else if (e.key == 'N' || e.key == 'n') {
-                exitCommandCallback();
+                setInResultsScreen(true);
             } else {
                 return;
             }
@@ -382,74 +403,175 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
     
     }
 
-    return (<>
+    if (inResultsScreen) {
+        let overallWPM = 0;
+        let overallAccuracy = 0;
+        let wpmSum = 0;
+        let overallSuccess = 0;
+        let overallFailure = 0;
+        byRoundResults.map((result, roundIdx) => {
+            wpmSum += result.wpm;
+            overallSuccess += result.numSuccessfulEntries;
+            overallFailure += result.numFailedEntries;
+        });
 
-        <div className="wpm__test__container">
-            {currentRoundStatus == RoundStatus.Unstarted && 
-                <span className="wpm__test__prompt__instructions">
-                    Begin typing the text below when ready. Timer will start.
-                </span>
-            }
-            {currentRoundStatus == RoundStatus.InProgress && 
-                <span className="wpm__test__prompt__instructions">
-                    Level in progress
-                </span>
-            }
-            {currentRoundStatus == RoundStatus.Completed && 
-                <span className="wpm__test__prompt__instructions">
-                    Level complete
-                </span>
-            }
-            <div className="wpm__test__prompt__div" tabIndex={0}
-                 ref={promptDisplayDivRef}
-                 id='prompt_input_div'
-                 onKeyDown={handleInputKeyDown}
-                 onChange={handleInputChange}
-                 onBlur={handleBlur}
-                 style={{ display: 'flex', flexWrap: 'wrap', wordWrap: 'break-word' }}
-            >
+        if (byRoundResults.length > 0) {
+            overallWPM = wpmSum / byRoundResults.length;
+        }
 
-            {
-                currentRoundCharByRowByIdx.map((charArray, rowIdx) => {
-                    const isLastItem = rowIdx === currentRoundCharByRowByIdx.length - 1;
+        let overallNumKeypresses = overallSuccess + overallFailure;
+        if (overallNumKeypresses > 0) {
+            overallAccuracy = overallSuccess / overallNumKeypresses;
+        }
 
-                    return (
-                        <span className="wpm__test__prompt__row__span" key={rowIdx}>
-                            {charArray.map((char, charIdx) => (
-                                <span className={getCssClassForCharByLineByCharIdx(rowIdx, charIdx)}
-                                    key={rowIdx + "_" + charIdx}>
-                                    {char}
-                                </span>
-                            ))}
-                        </span>
-                    );
-                })
-            }
+        return (
+            <>
+                <div className="wpm__results__container">
+                    <span className="wpm__results__header">Results</span>
+                    <div className="wpm__results__div>">
+                        <table className="wpm__results__table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Round
+                                    </th>
+                                    <th>
+                                        Prompt
+                                    </th>
+                                    <th>
+                                        WPM
+                                    </th>
+                                    <th>
+                                        Accuracy
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-            </div>
-            {currentRoundStatus != RoundStatus.Completed && 
-                <span className="wpm__test__prompt__instructions">
-                    Ctrl-R to restart level<br />
-                    Ctrl + Right Arrow to skip to next level<br />
-                    Ctrl-C to quit
-                </span>
-            }
-            {currentRoundStatus == RoundStatus.Completed && 
-                roundWPM > 0 &&
-                <>
+                                {
+                                    byRoundResults.map((roundResult, roundIdx) => {
+                                        let totalNumKeypresses = roundResult.numFailedEntries + roundResult.numSuccessfulEntries;
+                                        let accuracy = 0;
+                                        if (totalNumKeypresses > 0) {
+                                            accuracy = roundResult.numSuccessfulEntries / totalNumKeypresses;
+                                        }
+                                        return (
+                                            <tr>
+                                                <td>
+                                                    {roundIdx + 1}
+                                                </td>
+                                                <td>
+                                                    {roundResult.prompt.substring(0, 24).trim()}...
+                                                </td>
+                                                <td>
+                                                    {roundFloat(roundResult.wpm)}
+                                                </td>
+                                                <td>
+                                                    {roundFloat(accuracy) * 100 + '%'}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                }
+
+                                <tr>
+                                    <td>
+                                        Overall
+                                    </td>
+                                    <td>
+                                        Summary of Results
+                                    </td>
+                                    <td>
+                                        {roundFloat(overallWPM)}
+                                    </td>
+                                    <td>
+                                        {roundFloat(overallAccuracy) * 100 + '%'}
+                                    </td>
+                                </tr>
+          
+                            </tbody>
+                        </table>
+                    </div>
+                    <div 
+                    className="wpm__results__instructions" 
+                    ref={resultsFooterRef}
+                    onKeyDown={wpmTestKeyboardHandler}
+                    tabIndex={0}
+                    onBlur={handleResultsFooterBlur}
+                    >
+                        Press any key to exit
+                    </div>
+                </div>
+            </>
+        )
+    } else{
+
+        return (<>
+
+            <div className="wpm__test__container">
+                {currentRoundStatus == RoundStatus.Unstarted && 
                     <span className="wpm__test__prompt__instructions">
-                        Duration: {roundFloat(roundDuration)} seconds<br />
-                        WPM: {roundFloat(roundWPM)}<br />
-                        Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
-                        <span className="wpm__test__prompt__cta">
-                            Play a new level? Y/N<br />
-                            Ctrl-R to replay level
-                        </span>
+                        Begin typing the text below when ready. Timer will start.
                     </span>
-                </>
-            }
-        </div>
- 
-    </>);
+                }
+                {currentRoundStatus == RoundStatus.InProgress && 
+                    <span className="wpm__test__prompt__instructions">
+                        Level in progress
+                    </span>
+                }
+                {currentRoundStatus == RoundStatus.Completed && 
+                    <span className="wpm__test__prompt__instructions">
+                        Level complete
+                    </span>
+                }
+                <div className="wpm__test__prompt__div" tabIndex={0}
+                    ref={promptDisplayDivRef}
+                    id='prompt_input_div'
+                    onKeyDown={handleInputKeyDown}
+                    onBlur={handlePromptDisplayBlur}
+                    style={{ display: 'flex', flexWrap: 'wrap', wordWrap: 'break-word' }}
+                >
 
+                {
+                    currentRoundCharByRowByIdx.map((charArray, rowIdx) => {
+                        return (
+                            <span className="wpm__test__prompt__row__span" key={rowIdx}>
+                                {charArray.map((char, charIdx) => (
+                                    <span className={getCssClassForCharByLineByCharIdx(rowIdx, charIdx)}
+                                        key={rowIdx + "_" + charIdx}>
+                                        {char}
+                                    </span>
+                                ))}
+                            </span>
+                        );
+                    })
+                }
+
+                </div>
+                {currentRoundStatus != RoundStatus.Completed && 
+                    <span className="wpm__test__prompt__instructions">
+                        Ctrl-R to restart level<br />
+                        Ctrl + Right Arrow to skip to next level<br />
+                        Ctrl-C to quit
+                    </span>
+                }
+                {currentRoundStatus == RoundStatus.Completed && 
+                    roundWPM > 0 &&
+                    <>
+                        <span className="wpm__test__prompt__instructions">
+                            Duration: {roundFloat(roundDuration)} seconds<br />
+                            WPM: {roundFloat(roundWPM)}<br />
+                            Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
+                            <span className="wpm__test__prompt__cta">
+                                Play a new level? Y/N<br />
+                                Ctrl-R to replay level
+                            </span>
+                        </span>
+                    </>
+                }
+            </div>
+    
+        </>);
+
+    }
 }
