@@ -284,7 +284,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         e.preventDefault();
 
         // Bail out
-        if (e.ctrlKey && e.key == 'c') {
+        if (e.ctrlKey && e.key.toLowerCase() == 'c') {
             exitCommandCallback();
         }
 
@@ -293,7 +293,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             return;
         }
 
-        if (e.ctrlKey && e.key == 'r') {
+        if (e.ctrlKey && e.key.toLowerCase() == 'r') {
             restartRound();
             return;
         }
@@ -387,17 +387,17 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         <div className="wpm__test__container">
             {currentRoundStatus == RoundStatus.Unstarted && 
                 <span className="wpm__test__prompt__instructions">
-                    Begin typing the text below when ready
+                    Begin typing the text below when ready. Timer will start.
                 </span>
             }
             {currentRoundStatus == RoundStatus.InProgress && 
                 <span className="wpm__test__prompt__instructions">
-                    Round in progress
+                    Level in progress
                 </span>
             }
             {currentRoundStatus == RoundStatus.Completed && 
                 <span className="wpm__test__prompt__instructions">
-                    Round complete
+                    Level complete
                 </span>
             }
             <div className="wpm__test__prompt__div" tabIndex={0}
@@ -429,8 +429,8 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             </div>
             {currentRoundStatus != RoundStatus.Completed && 
                 <span className="wpm__test__prompt__instructions">
-                    Ctrl-R to Restart round<br />
-                    Ctrl + Right Arrow to skip to Next round<br />
+                    Ctrl-R to restart level<br />
+                    Ctrl + Right Arrow to skip to next level<br />
                     Ctrl-C to quit
                 </span>
             }
@@ -442,8 +442,8 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                         WPM: {roundFloat(roundWPM)}<br />
                         Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
                         <span className="wpm__test__prompt__cta">
-                            Play another round? Y/N<br />
-                            Ctrl-R to Replay round
+                            Play a new level? Y/N<br />
+                            Ctrl-R to replay level
                         </span>
                     </span>
                 </>
