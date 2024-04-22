@@ -92,9 +92,13 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         setRoundEndTime(0);
     };
 
-    const stopTimer = () => {
+    const stopTimer = (logStatistics :boolean) => {
         const endTime = new Date().getTime();
         setRoundEndTime(endTime);
+        if (!logStatistics) {
+            return;
+        }
+ 
         const duration = (endTime - roundStartTime) / 1000;
         setRoundDuration(duration);
 
@@ -140,6 +144,53 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         setCurrentRoundIdx(newRoundIdx);
         setCurrentRoundPromptIdx(newPromptIdx);
         setCurrentRoundPrompt(promptList[newPromptIdx]);
+    }
+
+    function restartRound() {
+
+        if (currentRoundStatus == RoundStatus.InProgress) {
+            stopTimer(false); //Stops the timer, doesn't log results
+        }
+
+        //1. Check round status - if it's finished, we should purge out the recent results first
+        if (currentRoundStatus == RoundStatus.Completed) {
+            if (byRoundResults.length > 0) {
+                let newResults = Array.from(byRoundResults);
+                newResults = newResults.slice(0, -1);
+                setByRoundResults(newResults);
+            }
+        }
+
+        setCurrentRoundStatus(RoundStatus.Unstarted);
+
+        //2. Clean up everything else
+        setRoundStartTime(0);
+        setRoundEndTime(0);
+        setNumFailedEntries(0);
+        setNumSuccessfulEntries(0);
+        setCurrentRowIdx(0);
+        setCurrentRowCharIdx(0);
+
+        //3. Reset our characters
+        //TODO: This section is copied and pasted from the first useEffect that gets run. We should consolidate logic.
+        let promptLines = getLinesFromPrompt(currentRoundPrompt);
+        let charStatusByRowByIdx :CharacterStatus[][] = [];
+        let charByRowByIdx :string[][] = [];
+
+        for (let i = 0; i < promptLines.length; i++) {
+            let charByIdx = Array.from(promptLines[i]); 
+            let defaultCharVals = Array<CharacterStatus>(charByIdx.length).fill(CharacterStatus.Unplayed);
+            charStatusByRowByIdx.push(defaultCharVals);
+            charByRowByIdx.push(charByIdx);
+        }
+
+        if (charStatusByRowByIdx.length > 0 && charStatusByRowByIdx[0].length > 0) {
+            charStatusByRowByIdx[0][0] = CharacterStatus.Selected;
+        }
+
+        setCurrentStatusByRowByCharIdx(charStatusByRowByIdx);
+        setCurrentRoundCharByRowByIdx(charByRowByIdx);
+
     }
 
     const promptDisplayDivRef = useRef<HTMLDivElement>(null);
@@ -242,6 +293,11 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             return;
         }
 
+        if (e.ctrlKey && e.key == 'r') {
+            restartRound();
+            return;
+        }
+
         if (e.key.length !== 1 || e.key == "Alt" || e.key == "Control" 
             || e.key == "CapsLock" || e.key == "Fn" || e.key == "Meta" 
             || e.key == "Shift" || e.key == 'Tab' || e.key == 'ArrowUp'
@@ -303,7 +359,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             if (newIdx >= currentStatusByRowByCharIdx[currentRowIdx].length) { //The last char of the line was just entered
                 let newRowIdx = currentRowIdx + 1;
                 if (newRowIdx >= currentStatusByRowByCharIdx.length) { //We finished the last row
-                    stopTimer();
+                    stopTimer(true);
                     setCurrentRoundStatus(RoundStatus.Completed);
                 } else { //Progress to the next row
                     setCurrentRowIdx(newRowIdx);
@@ -375,7 +431,8 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             </div>
             {currentRoundStatus != RoundStatus.Completed && 
                 <span className="wpm__test__prompt__instructions">
-                    Ctrl + Right Arrow to skip round<br />
+                    Ctrl-R to Restart round<br />
+                    Ctrl + Right Arrow to skip to Next round<br />
                     Ctrl-C to quit
                 </span>
             }
@@ -386,7 +443,10 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                         Duration: {roundFloat(roundDuration)} seconds<br />
                         WPM: {roundFloat(roundWPM)}<br />
                         Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
-                        <span className="wpm__test__prompt__cta">Play another round? Y/N</span>
+                        <span className="wpm__test__prompt__cta">
+                            Play another round? Y/N<br />
+                            Ctrl-R to Replay round
+                        </span>
                     </span>
                 </>
             }
