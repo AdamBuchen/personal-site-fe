@@ -200,6 +200,15 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         []
         );
 
+    /**
+     * When users click outside of the playable area, refocus.
+     */
+    const handleBlur = useCallback(
+        () => {
+            promptDisplayDivRef.current?.focus();
+        }, []
+    );
+
     const getCssClassForCharByLineByCharIdx = useMemo(() => {
         return (lineIdx: number, charIdx: number) :string => {
         let charStatus = currentStatusByRowByCharIdx[lineIdx][charIdx];
@@ -340,6 +349,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                  id='prompt_input_div'
                  onKeyDown={handleInputKeyDown}
                  onChange={handleInputChange}
+                 onBlur={handleBlur}
                  style={{ display: 'flex', flexWrap: 'wrap', wordWrap: 'break-word' }}
             >
 
@@ -365,6 +375,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             </div>
             {currentRoundStatus != RoundStatus.Completed && 
                 <span className="wpm__test__prompt__instructions">
+                    Ctrl + Right Arrow to skip round<br />
                     Ctrl-C to quit
                 </span>
             }
