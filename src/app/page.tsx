@@ -145,7 +145,7 @@ export default function Home() {
     pushToHistory(<>
         <pre>{asciiArt}</pre>
         <div className="terminal__date">{isoStringWithoutMillis}<br /></div>
-        <div>Valid commands: { topLevelValidCommands.join(', ') }</div>
+        <div>Valid commands:<br />{ topLevelValidCommands.join(', ') }</div>
         <br />
       </>
     );
@@ -172,7 +172,7 @@ export default function Home() {
         <div>
           <span style={{ color: '#F9EF00' }}>
             <strong>Welcome to AdamBuchen.com</strong><br />
-            <div>Valid commands: { topLevelValidCommands.join(', ') }</div>
+            <div>Valid commands:<br/>{ topLevelValidCommands.join(', ') }</div>
           </span>
         </div>
       </>);
@@ -190,7 +190,7 @@ export default function Home() {
     'bio': () => {
       setRunningTerminalApp(TerminalApps.Bio);
     },
-    'wpm_test': () => {
+    'typing_game': () => {
       setRunningTerminalApp(TerminalApps.WPMTest);
     },
     'clear': async () => {

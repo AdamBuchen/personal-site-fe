@@ -28,7 +28,8 @@ export type BioProps = {
 };
 
 export const topLevelValidCommands: string[] = ['about', 'cat', 'download_resume',
-  'clear', 'help', 'ls', 'linkedin', 'github', 'radio', 'reset', 'rr', 'view_resume'];
+  'clear', 'help', 'ls', 'linkedin', 'github', 'radio', 'reset', 'rr', 'typing_game',
+  'view_resume'];
 
 export const validRadioCommands: string[] = ['next_station', 'play', 'pause', 
   'stop', 'next', 'prev'];
