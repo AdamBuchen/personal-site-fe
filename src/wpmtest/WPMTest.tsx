@@ -412,7 +412,6 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             {
                 currentRoundCharByRowByIdx.map((charArray, rowIdx) => {
                     const isLastItem = rowIdx === currentRoundCharByRowByIdx.length - 1;
-                    const lastSpace = isLastItem ? '' : '\u00a0'; // nonbreaking space
 
                     return (
                         <span className="wpm__test__prompt__row__span" key={rowIdx}>
@@ -422,7 +421,6 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                                     {char}
                                 </span>
                             ))}
-                            {/* lastSpace */}
                         </span>
                     );
                 })
