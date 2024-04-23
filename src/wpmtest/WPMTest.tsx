@@ -570,7 +570,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                             WPM: {roundFloat(roundWPM)}<br />
                             Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
                             <span className="wpm__test__prompt__cta">
-                                Play a new level? Y/N<br />
+                                Play a new level? [Y] / [N]<br />
                                 [{modifierKey}] + [R] to replay level
                             </span>
                         </span>
