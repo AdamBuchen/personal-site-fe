@@ -490,7 +490,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                                         {roundFloat(overallWPM)}
                                     </td>
                                     <td>
-                                        {roundFloat(overallAccuracy) * 100 + '%'}
+                                        {roundFloat(overallAccuracy * 100) + '%'}
                                     </td>
                                 </tr>
           
