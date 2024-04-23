@@ -291,12 +291,16 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
     }, [currentStatusByRowByCharIdx]);
 
 
+    const isMacOS = () => {
+        return navigator.userAgent.toLowerCase().includes('mac');
+    }
+
     function wpmTestKeyboardHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         
         e.preventDefault();
 
         // Bail out
-        if (e.ctrlKey && e.key.toLowerCase() == 'c') {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() == 'c') {
             if (byRoundResults.length == 0) {
                 exitCommandCallback();
                 return;
@@ -305,12 +309,12 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
             return;
         }
 
-        if (e.ctrlKey && e.key == 'ArrowRight') {
+        if ((e.ctrlKey || e.metaKey) && e.key == 'ArrowRight') {
             startNewRound();
             return;
         }
 
-        if (e.ctrlKey && e.key.toLowerCase() == 'r') {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() == 'r') {
             restartRound();
             return;
         }
@@ -507,6 +511,8 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
         )
     } else{
 
+        const modifierKey = isMacOS() ? 'Cmd' : 'Ctrl';
+
         return (<>
 
             <div className="wpm__test__container">
@@ -551,9 +557,9 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                 </div>
                 {currentRoundStatus != RoundStatus.Completed && 
                     <span className="wpm__test__prompt__instructions">
-                        [Ctrl] + [R] to restart level<br />
-                        [Ctrl] + [→] to skip to next level<br />
-                        [Ctrl] + [C] to quit
+                        [{modifierKey}] + [R] to restart level<br />
+                        [{modifierKey}] + [→] to skip to next level<br />
+                        [{modifierKey}] + [C] to quit
                     </span>
                 }
                 {currentRoundStatus == RoundStatus.Completed && 
@@ -565,7 +571,7 @@ export function WPMTest({exitCommandCallback}:WPMTestProps) {
                             Accuracy: {roundFloat(roundAccuracyAsPercentage)}%<br />
                             <span className="wpm__test__prompt__cta">
                                 Play a new level? Y/N<br />
-                                [Ctrl] + [R] to replay level
+                                [{modifierKey}] + [R] to replay level
                             </span>
                         </span>
                     </>
